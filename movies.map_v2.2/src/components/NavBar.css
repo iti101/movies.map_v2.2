@@ -31,8 +31,15 @@
   cursor: pointer;
 }
 
-/* Login / logout button on the top right */
-.auth-button {
+/* Places the mode and login/logout buttons side by side */
+.navbar-icons {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Shared style for the mode and login/logout buttons */
+.icon-button {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -44,10 +51,15 @@
   cursor: pointer;
 }
 
-/* Size of the login / logout SVG */
-.auth-icon {
+/* Size of the icon SVGs */
+.icon {
   width: 24px;
   height: 24px;
+}
+
+/* The icons are dark by default, so flip them to light in dark mode */
+body.dark .icon {
+  filter: invert(1);
 }
 
 /* One of the three bars that make up the hamburger icon */
@@ -55,7 +67,7 @@
   display: block;
   width: 100%;
   height: 2px;
-  background: #08060d;
+  background: var(--page-text);
   transition: transform 0.3s, opacity 0.3s;
 }
 
@@ -80,7 +92,7 @@
   z-index: 2;
   width: 100%;
   height: 1px;
-  background: #08060d;
+  background: var(--page-text);
 }
 
 /* Full-screen menu panel, hidden by default */
@@ -94,7 +106,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f8f7f4;
+  background: var(--page-bg);
   opacity: 0;
   visibility: hidden;
   transition: opacity 0.3s, visibility 0.3s;
@@ -120,7 +132,7 @@
 /* Style shared by real links and the dead Watchlist text */
 .menu-links a,
 .dead-link {
-  color: #08060d;
+  color: var(--page-text);
   font-size: 28px;
   font-weight: 500;
   text-decoration: none;
