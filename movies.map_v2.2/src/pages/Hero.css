@@ -1,0 +1,9 @@
+.hero {
+  height: 100vh;
+  scroll-snap-align: start;
+  background-color: lightblue;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+}

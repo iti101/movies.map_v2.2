@@ -1,0 +1,9 @@
+.randomize {
+  height: 100vh;
+  scroll-snap-align: start;
+  background-color: lightyellow;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 48px;
+}
