@@ -2,7 +2,7 @@ import './Search.css'
 
 function Search() {
   return (
-    <section className="search">
+    <section id="search" className="search">
       2
     </section>
   )

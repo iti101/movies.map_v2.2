@@ -2,7 +2,7 @@ import './Randomize.css'
 
 function Randomize() {
   return (
-    <section className="randomize">
+    <section id="randomize" className="randomize">
       3
     </section>
   )

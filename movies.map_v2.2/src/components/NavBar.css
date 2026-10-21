@@ -1,0 +1,139 @@
+/* Fixed bar stuck to the top of the page */
+.navbar {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  z-index: 1000;
+}
+
+/* Top row: hamburger on the left, auth icon on the right */
+.navbar-top {
+  position: relative;
+  z-index: 2;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 12px 16px 8px;
+}
+
+/* Clickable hamburger button, sits above the full-screen menu */
+.hamburger {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 5px;
+  width: 44px;
+  height: 44px;
+  padding: 10px 8px;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Login / logout button on the top right */
+.auth-button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: none;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* Size of the login / logout SVG */
+.auth-icon {
+  width: 24px;
+  height: 24px;
+}
+
+/* One of the three bars that make up the hamburger icon */
+.line {
+  display: block;
+  width: 100%;
+  height: 2px;
+  background: #08060d;
+  transition: transform 0.3s, opacity 0.3s;
+}
+
+/* Top bar rotates down to form the X */
+.navbar.open .line:nth-child(1) {
+  transform: translateY(7px) rotate(45deg);
+}
+
+/* Middle bar fades out when the menu is open */
+.navbar.open .line:nth-child(2) {
+  opacity: 0;
+}
+
+/* Bottom bar rotates up to form the X */
+.navbar.open .line:nth-child(3) {
+  transform: translateY(-7px) rotate(-45deg);
+}
+
+/* Thin dividing line across the top of the page */
+.divider {
+  position: relative;
+  z-index: 2;
+  width: 100%;
+  height: 1px;
+  background: #08060d;
+}
+
+/* Full-screen menu panel, hidden by default */
+.menu {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100vh;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: #f8f7f4;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s, visibility 0.3s;
+}
+
+/* Show the menu when the navbar has the open class */
+.navbar.open .menu {
+  opacity: 1;
+  visibility: visible;
+}
+
+/* Centered vertical list of menu links */
+.menu-links {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 28px;
+}
+
+/* Style shared by real links and the dead Watchlist text */
+.menu-links a,
+.dead-link {
+  color: #08060d;
+  font-size: 28px;
+  font-weight: 500;
+  text-decoration: none;
+  line-height: 1.2;
+}
+
+/* Slight fade when hovering a real menu link */
+.menu-links a:hover {
+  opacity: 0.65;
+}
+
+/* Watchlist is not clickable yet, so use a normal cursor */
+.dead-link {
+  cursor: default;
+  opacity: 0.85;
+}
