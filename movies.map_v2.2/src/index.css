@@ -50,8 +50,20 @@
   }
 }
 
+/* Light mode colors (the default): off-white/beige background, dark text */
 body {
+  --page-bg: #f5f0e6;
+  --page-text: #2b2b2b;
   margin: 0;
+  background: var(--page-bg);
+  color: var(--page-text);
+  transition: background 0.3s, color 0.3s;
+}
+
+/* Dark mode colors: used when the body has the "dark" class */
+body.dark {
+  --page-bg: #2b2d31;
+  --page-text: #f5f0e6;
 }
 
 #root {

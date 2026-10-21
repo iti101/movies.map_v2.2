@@ -1,9 +1,10 @@
+/* Full-screen Home section, colored by the current light/dark mode */
 .hero {
   height: 100vh;
   scroll-snap-align: start;
-  background-color: lightblue;
+  background-color: var(--page-bg);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 48px;
+  color: var(--page-text);
 }

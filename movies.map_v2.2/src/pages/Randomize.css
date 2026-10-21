@@ -1,7 +1,8 @@
+/* Full-screen Randomize section, colored by the current light/dark mode */
 .randomize {
   height: 100vh;
   scroll-snap-align: start;
-  background-color: lightyellow;
+  background-color: var(--page-bg);
   display: flex;
   align-items: center;
   justify-content: center;
