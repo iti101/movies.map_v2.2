@@ -1,16 +1,21 @@
 import { useState } from 'react'
+import { Link } from 'react-router-dom'
 import Button from '../components/Button'
 import { searchMovies, posterUrl } from '../api/tmdb'
+import { loadSearch, saveSearch } from '../searchMemory'
 import searchIcon from '../assets/MagnifyingGlass.svg'
 import './Search.css'
 
 // Search section: title, search bar, and a poster grid of results
 function Search() {
+  // start from the last search, so Back from a movie can show the same results
+  const saved = loadSearch()
+
   // text in the search input
-  const [query, setQuery] = useState('')
+  const [query, setQuery] = useState(saved.query)
 
   // lijst van films/resultaten van de API
-  const [results, setResults] = useState([])
+  const [results, setResults] = useState(saved.results)
 
   // true wanneer wachten op de API
   const [loading, setLoading] = useState(false)
@@ -19,7 +24,7 @@ function Search() {
   const [error, setError] = useState(null)
 
   // true after the user has submitted at least one search
-  const [searched, setSearched] = useState(false)
+  const [searched, setSearched] = useState(saved.searched)
 
   // runs when the user submits the form (Enter or the search button)
   async function handleSubmit(event) {
@@ -38,9 +43,11 @@ function Search() {
       // vraagt de API voor films die overeenkomen met de tekst
       const movies = await searchMovies(text)
       setResults(movies)
+      saveSearch(text, movies, true)
     } catch (err) {
       // verwijdert de oude resultaten en toont het error bericht
       setResults([])
+      saveSearch(text, [], true)
       setError(err.message)
     } finally {
       // stopt de loading animatie
@@ -102,7 +109,11 @@ function Search() {
                 const poster = posterUrl(movie.poster_path)
 
                 return (
-                  <div key={movie.id} className="movie">
+                  <Link
+                    key={movie.id}
+                    to={'/movie/' + movie.id}
+                    className="movie"
+                  >
                     {poster ? (
                       <img src={poster} alt="" className="movie-poster" />
                     ) : (
@@ -110,7 +121,7 @@ function Search() {
                     )}
                     <p className="movie-title">{movie.title}</p>
                     {year && <p className="movie-year">{year}</p>}
-                  </div>
+                  </Link>
                 )
               })}
             </div>

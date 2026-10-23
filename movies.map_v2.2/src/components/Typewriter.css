@@ -12,6 +12,8 @@
 /* headline tijdens de typing fase */
 .typing-text {
   margin: 0;
+  /* use --page-text so the app dark/light toggle wins over the default h1 color */
+  color: var(--page-text);
   font-family: 'Fraunces', Georgia, serif;
   font-weight: 500;
   font-size: inherit;

@@ -1,4 +1,5 @@
 import { useState } from 'react'
+import { Link, useLocation } from 'react-router-dom'
 import './NavBar.css'
 import loginIcon from '../assets/login_opsz24.svg'
 import logoutIcon from '../assets/logout_opsz24.svg'
@@ -15,6 +16,10 @@ function NavBar() {
 
   // state van dark/light-mode
   const [isDark, setIsDark] = useState(false)
+
+  const location = useLocation()
+  // true when we are on the landing page (hash links work there)
+  const onHome = location.pathname === '/'
 
   // opent of sluit het menu
   function toggleMenu() {
@@ -79,19 +84,37 @@ function NavBar() {
       <nav className="menu">
         <ul className="menu-links">
           <li>
-            <a href="#home" onClick={closeMenu}>
-              Home
-            </a>
+            {onHome ? (
+              <a href="#home" onClick={closeMenu}>
+                Home
+              </a>
+            ) : (
+              <Link to="/#home" onClick={closeMenu}>
+                Home
+              </Link>
+            )}
           </li>
           <li>
-            <a href="#search" onClick={closeMenu}>
-              Search
-            </a>
+            {onHome ? (
+              <a href="#search" onClick={closeMenu}>
+                Search
+              </a>
+            ) : (
+              <Link to="/#search" onClick={closeMenu}>
+                Search
+              </Link>
+            )}
           </li>
           <li>
-            <a href="#randomize" onClick={closeMenu}>
-              Randomize
-            </a>
+            {onHome ? (
+              <a href="#randomize" onClick={closeMenu}>
+                Randomize
+              </a>
+            ) : (
+              <Link to="/#randomize" onClick={closeMenu}>
+                Randomize
+              </Link>
+            )}
           </li>
           {/* Not linked yet: will open the profile page or the login modal later */}
           <li>

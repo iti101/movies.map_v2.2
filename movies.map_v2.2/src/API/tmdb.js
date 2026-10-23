@@ -4,10 +4,28 @@ const API_BASE = 'https://api.themoviedb.org/3'
 // Base URL for movie posters (w342 = medium size)
 const IMAGE_BASE = 'https://image.tmdb.org/t/p/w342'
 
+// Wider backdrop image for the faded page background
+const BACKDROP_BASE = 'https://image.tmdb.org/t/p/w1280'
+
+// Smaller portrait image for cast photos
+const PROFILE_BASE = 'https://image.tmdb.org/t/p/w185'
+
 // Turns a TMDB poster path into a full image URL (or null if there is no poster)
 export function posterUrl(posterPath) {
   if (!posterPath) return null
   return IMAGE_BASE + posterPath
+}
+
+// Turns a TMDB backdrop path into a full image URL
+export function backdropUrl(backdropPath) {
+  if (!backdropPath) return null
+  return BACKDROP_BASE + backdropPath
+}
+
+// Turns a TMDB profile path into a full image URL (actor photos)
+export function profileUrl(profilePath) {
+  if (!profilePath) return null
+  return PROFILE_BASE + profilePath
 }
 
 // Searches TMDB for movies that match the given title
@@ -49,4 +67,82 @@ export async function searchMovies(query) {
 
   // TMDB puts the movies in a "results" array
   return data.results || []
+}
+
+// Loads one movie by its TMDB id (title, overview, runtime, genres, poster)
+export async function getMovie(movieId) {
+  const apiKey = import.meta.env.VITE_TMDB_API_KEY
+  if (!apiKey) {
+    throw new Error('Missing TMDB API key. Add VITE_TMDB_API_KEY to your .env file.')
+  }
+
+  const url =
+    API_BASE + '/movie/' + movieId + '?api_key=' + apiKey + '&language=en-US'
+
+  let response
+  try {
+    response = await fetch(url)
+  } catch {
+    throw new Error('Could not reach TMDB. Check your connection and try again.')
+  }
+
+  if (!response.ok) {
+    throw new Error('Could not load this movie. Please try again.')
+  }
+
+  return await response.json()
+}
+
+// Loads movies that TMDB marks as similar to this one
+export async function getSimilarMovies(movieId) {
+  const apiKey = import.meta.env.VITE_TMDB_API_KEY
+  if (!apiKey) {
+    throw new Error('Missing TMDB API key. Add VITE_TMDB_API_KEY to your .env file.')
+  }
+
+  const url =
+    API_BASE +
+    '/movie/' +
+    movieId +
+    '/similar?api_key=' +
+    apiKey +
+    '&language=en-US&page=1'
+
+  let response
+  try {
+    response = await fetch(url)
+  } catch {
+    throw new Error('Could not reach TMDB. Check your connection and try again.')
+  }
+
+  if (!response.ok) {
+    throw new Error('Could not load similar movies. Please try again.')
+  }
+
+  const data = await response.json()
+  return data.results || []
+}
+
+// Loads cast and crew for one movie (actors + directors, and so on)
+export async function getMovieCredits(movieId) {
+  const apiKey = import.meta.env.VITE_TMDB_API_KEY
+  if (!apiKey) {
+    throw new Error('Missing TMDB API key. Add VITE_TMDB_API_KEY to your .env file.')
+  }
+
+  const url =
+    API_BASE + '/movie/' + movieId + '/credits?api_key=' + apiKey + '&language=en-US'
+
+  let response
+  try {
+    response = await fetch(url)
+  } catch {
+    throw new Error('Could not reach TMDB. Check your connection and try again.')
+  }
+
+  if (!response.ok) {
+    throw new Error('Could not load the cast. Please try again.')
+  }
+
+  return await response.json()
 }

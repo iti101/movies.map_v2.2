@@ -177,6 +177,13 @@ body.dark .search-icon {
 .movie {
   width: 140px;
   text-align: center;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.movie:hover .movie-poster {
+  opacity: 0.85;
 }
 
 .movie-poster {

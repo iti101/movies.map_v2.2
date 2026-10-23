@@ -1,0 +1,78 @@
+/* Landing.css turns scroll-snap on for the whole page. This class switches it off. */
+html.no-snap {
+  scroll-snap-type: none;
+}
+
+/* Room at the top so the fixed navbar does not cover the Back button */
+.movie-detail {
+  position: relative;
+  isolation: isolate;
+  min-height: 100vh;
+  box-sizing: border-box;
+  padding: 88px 24px 64px;
+  background: var(--page-bg);
+  color: var(--page-text);
+  overflow: hidden;
+}
+
+/* Soft, faded movie backdrop that fades out toward the bottom */
+.movie-detail-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: min(72vh, 720px);
+  z-index: 0;
+  background-size: cover;
+  background-position: center top;
+  opacity: 0.28;
+  pointer-events: none;
+  /* Fade the image into the page background */
+  mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0, 0, 0, 0.55) 45%,
+    transparent 100%
+  );
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.9) 0%,
+    rgba(0, 0, 0, 0.55) 45%,
+    transparent 100%
+  );
+}
+
+/* A little darker veil so text stays readable on light mode too */
+.movie-detail-backdrop::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(
+    to bottom,
+    rgba(0, 0, 0, 0.25) 0%,
+    transparent 55%
+  );
+}
+
+body.dark .movie-detail-backdrop {
+  opacity: 0.4;
+}
+
+.movie-detail-inner {
+  position: relative;
+  z-index: 1;
+  width: min(100%, 1000px);
+  margin: 0 auto;
+}
+
+.movie-detail-inner > .button {
+  margin-bottom: 28px;
+}
+
+.movie-detail-message {
+  margin: 12px 0 0;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 15px;
+  opacity: 0.75;
+}
