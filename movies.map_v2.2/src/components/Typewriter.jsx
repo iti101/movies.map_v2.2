@@ -4,43 +4,39 @@ import moviesLogo from '../assets/moviesLOGO.png'
 import { scrollToSection } from '../scrollToSection.js'
 import './Typewriter.css'
 
-// How many horizontal bars make up the scroll arrow under Get Started
-const ARROW_BARS = 4
-
-// Waits a given number of milliseconds before continuing
+// wacht functie
 function wait(ms) {
   return new Promise((resolve) => setTimeout(resolve, ms))
 }
 
+// Intro animatie: typt een headline, dan toont de logo en Get Started
 function Typewriter() {
-  // The letters currently shown during the typing phase
   const [text, setText] = useState('')
 
-  // Which screen to show: 'typing' (text) or 'brand' (logo)
+  // 'typing' = headline, 'brand' = logo + Get Started
   const [phase, setPhase] = useState('typing')
 
-  // Whether the Get Started button and arrow are visible yet
+  // of de Get Started knop en de pijl zichtbaar zijn
   const [showCta, setShowCta] = useState(false)
 
-  // Runs the intro animation once when this component first appears
+  // runt de intro 1keer wanneer deze component voor het eerst verschijnt
   useEffect(() => {
-    // Skip the typing show if the user prefers less motion
+    // overslaan van de animatie, als de gebruiker dit wilt (brand met Get started verschijnt)
     if (window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
       setPhase('brand')
       setShowCta(true)
       return
     }
-
-    // Becomes true when the component unmounts, so we stop the animation
+    // wordt true wanneer de component wordt afgehaald, en stopt de animatie
     let cancelled = false
 
-    // Local copy of the typed text (avoids React Strict Mode doubling letters)
+    // lokale kopie van de getypte tekst (voorkomt React Strict Mode dubbel tellen van letters)
     let current = ''
     setText('')
     setPhase('typing')
     setShowCta(false)
 
-    // Types one string of letters onto the screen, letter by letter
+    // typt de letters, 1 voor 1
     async function typeText(chunk) {
       for (let i = 0; i < chunk.length; i++) {
         if (cancelled) return
@@ -50,7 +46,7 @@ function Typewriter() {
       }
     }
 
-    // verwijdert letters van het einde van de tekst
+    // verwijdert de letters v/h einde van de tekst
     async function deleteChars(count) {
       for (let i = 0; i < count; i++) {
         if (cancelled) return
@@ -60,7 +56,7 @@ function Typewriter() {
       }
     }
 
-    // de volledige typing animatie: movie → show → episode → logo → Get Started
+    // gehele intro animatie: movie → show → episode → logo → Get Started
     async function runIntro() {
       await typeText('Find any')
       if (cancelled) return
@@ -86,7 +82,7 @@ function Typewriter() {
       if (cancelled) return
       await wait(500)
 
-      // verwijdert de hele lijn voordat het logo wordt getoond
+      // clear the whole line before showing the logo
       await deleteChars(current.length)
       if (cancelled) return
       await wait(300)
@@ -100,62 +96,58 @@ function Typewriter() {
 
     runIntro()
 
-    // stopt de animatie als de gebruiker de pagina verlaat tijdens de intro
+    // stopt de animatie als de gebruiker deze  verlaat
     return () => {
       cancelled = true
     }
   }, [])
 
-  // Scrolls smoothly down to the Search section
-  function goToSearch() {
-    scrollToSection('search')
-  }
-
   return (
     <div className="intro">
-      {/* Typing phase: growing / shrinking headline with a blinking cursor */}
+      {/* Typing phase: tekst + cursor */}
       {phase === 'typing' && (
-        <h1 className="typewriter">
+        <h1 className="typing-text">
           {text}
-          <span className="typewriter__cursor">|</span>
+          <span className="cursor">|</span>
         </h1>
       )}
 
-      {/* Brand phase: logo icon + wordmark, then Get Started */}
+      {/* Brand phase: logo + Get Started + arrow */}
       {phase === 'brand' && (
-        <div className="intro__lockup">
-          {/* Logo icon and wordmark side by side */}
-          <div className="intro__brand">
+        <div className="brand-block">
+          <div className="brand">
             <img
-              className="intro__icon"
+              className="logo-icon"
               src={logoIcon}
               alt=""
               width={160}
               height={160}
             />
-            <div className="intro__wordmark-clip">
-              <div className="intro__wordmark-inner">
-                <img
-                  className="intro__wordmark"
-                  src={moviesLogo}
-                  alt="Movies.map"
-                  width={320}
-                  height={32}
-                />
-              </div>
+            {/* verschijning v/d de wordmark logo (movies.map + logo*/}
+            <div className="logo-clip">
+              <img
+                className="logo-text"
+                src={moviesLogo}
+                alt="Movies.map"
+                width={320}
+                height={32}
+              />
             </div>
           </div>
 
-          {/* Get Started button and the arrow pointing down to Search */}
           {showCta && (
-            <div className="intro__cta">
-              <button className="intro__start" onClick={goToSearch}>
+            <div className="cta">
+              <button
+                className="get-started"
+                onClick={() => scrollToSection('search')}
+              >
                 Get Started
               </button>
-              <div className="intro__arrow">
-                {Array.from({ length: ARROW_BARS }, (_, i) => (
-                  <span key={i} className="intro__arrow-bar" />
-                ))}
+              <div className="arrow">
+                <span className="arrow-bar" />
+                <span className="arrow-bar" />
+                <span className="arrow-bar" />
+                <span className="arrow-bar" />
               </div>
             </div>
           )}

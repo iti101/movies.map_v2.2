@@ -5,35 +5,35 @@ import logoutIcon from '../assets/logout_opsz24.svg'
 import darkModeIcon from '../assets/dark_mode_opsz24.svg'
 import lightModeIcon from '../assets/light_mode_opsz24.svg'
 
-// Top navigation bar: hamburger button, dividing line, and full-screen menu
+
 function NavBar() {
-  // Remembers whether the menu is open (true) or closed (false)
+  // state van menu (open/gesloten)
   const [isOpen, setIsOpen] = useState(false)
 
-  // Remembers which auth icon to show (false = login, true = logout)
+  // state van login/logout icon
   const [isLoggedIn, setIsLoggedIn] = useState(false)
 
-  // Remembers which color mode is active (false = light, true = dark)
+  // state van dark/light-mode
   const [isDark, setIsDark] = useState(false)
 
-  // Opens or closes the menu, and stops the page from scrolling while it is open
+  // opent of sluit het menu
   function toggleMenu() {
     setIsOpen(!isOpen)
     document.body.style.overflow = isOpen ? 'auto' : 'hidden'
   }
 
-  // Closes the menu after a link is clicked and lets the page scroll again
+  // sluit het menu nadat er op een link is geklikt
   function closeMenu() {
     setIsOpen(false)
     document.body.style.overflow = 'auto'
   }
 
-  // Swaps the login and logout icons (modal will be added later)
+  // verwisselt de login en logout icon (modal wordt later toegevoegd)
   function toggleAuthIcon() {
     setIsLoggedIn(!isLoggedIn)
   }
 
-  // Switches between light and dark mode by adding/removing the "dark" class on the body
+  // schakelt tussen light en dark mode door de "dark" class toe te voegen/verwijderen op de body
   function toggleTheme() {
     setIsDark(!isDark)
     document.body.classList.toggle('dark')
@@ -50,7 +50,7 @@ function NavBar() {
           <span className="line"></span>
         </button>
 
-        {/* Groups the two icon buttons together on the right */}
+        {/* groepering v/d twee icon buttons rechts */}
         <div className="navbar-icons">
           {/* Light / dark mode button: shows the moon in light mode and the sun in dark mode */}
           <button className="icon-button" onClick={toggleTheme}>
@@ -61,7 +61,7 @@ function NavBar() {
             />
           </button>
 
-          {/* Login / logout icon button (top right) */}
+          {/* Login/logout icon button (top right) */}
           <button className="icon-button" onClick={toggleAuthIcon}>
             <img
               src={isLoggedIn ? logoutIcon : loginIcon}
@@ -72,10 +72,10 @@ function NavBar() {
         </div>
       </div>
 
-      {/* Thin line across the top of the page */}
+      {/* scheidslijn van de NavBar */}
       <div className="divider"></div>
 
-      {/* Full-screen menu with links to each section of the landing page */}
+      {/* fullscreen menu met links naar elke sectie*/}
       <nav className="menu">
         <ul className="menu-links">
           <li>

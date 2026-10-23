@@ -1,28 +1,43 @@
-/* Full-screen Search section, colored by the current light/dark mode */
+/* Full-screen Search section — bar starts in the middle of the page */
 .search {
   height: 100vh;
   scroll-snap-align: start;
   background-color: var(--page-bg);
   display: flex;
-  align-items: center;
   justify-content: center;
+  align-items: center;
+  overflow: hidden;
+  box-sizing: border-box;
 }
 
-/* Centers the title and field as one group */
+/* After a search, move the bar up so results can appear underneath */
+.search.open {
+  align-items: flex-start;
+  padding-top: 80px;
+}
+
+/* Centers the title, field, and results as one column */
 .search-box {
   display: flex;
   flex-direction: column;
   align-items: center;
-  width: min(90%, 420px);
+  width: min(90%, 900px);
+  overflow: hidden;
 }
 
-/* Word "Search" above the input (2.5x the default h2 size) */
+/* Limit height when results are open so only the grid scrolls */
+.search.open .search-box {
+  max-height: calc(100vh - 80px);
+}
+
+/* Big "Search" title above the input */
 .search-title {
   margin: 0 0 16px;
   color: var(--page-text);
   font-family: 'Fraunces', Georgia, serif;
   font-weight: 500;
   font-size: 60px;
+  flex-shrink: 0;
 }
 
 @media (max-width: 1024px) {
@@ -31,10 +46,11 @@
   }
 }
 
-/* Holds the input and places the button inside it on the right */
+/* Holds the input; the round button sits inside on the right */
 .search-field {
   position: relative;
-  width: 100%;
+  width: min(100%, 420px);
+  flex-shrink: 0;
 }
 
 /* Text field; extra right padding so text does not go under the button */
@@ -49,6 +65,10 @@
   font-family: var(--heading);
   font-size: 16px;
   outline: none;
+}
+
+.search-input:disabled {
+  opacity: 0.6;
 }
 
 .search-input::placeholder {
@@ -73,7 +93,7 @@
   transform: translateY(-50%);
 }
 
-/* Looking glass icon sized to fit the small round button */
+/* Magnifying-glass icon sized for the small round button */
 .search-icon {
   width: 16px;
   height: 16px;
@@ -84,4 +104,109 @@
 /* In dark mode the button is light, so the dark icon is fine as-is */
 body.dark .search-icon {
   filter: none;
+}
+
+/* Loading / error / empty messages under the search bar */
+.search-message {
+  margin: 20px 0 0;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 15px;
+  text-align: center;
+  opacity: 0.75;
+  flex-shrink: 0;
+}
+
+/* Same width as 5 posters + gaps, so "See all" lines up with the grid */
+.results-area {
+  width: min(100%, 780px);
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Pushes the See all button to the right edge of the results */
+.see-all-row {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+
+/* Small pill link (dead link for now) */
+.see-all {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--page-text);
+  color: var(--page-bg);
+  font-family: var(--heading);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.see-all:hover {
+  opacity: 0.85;
+}
+
+/* Poster grid under the search bar; scrollbar is hidden */
+.results {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+  gap: 20px;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 40px;
+  scrollbar-width: none;
+}
+
+/* Hide scrollbar in Chrome / Safari / Edge */
+.results::-webkit-scrollbar {
+  display: none;
+}
+
+/* One movie card: poster + title + year */
+.movie {
+  width: 140px;
+  text-align: center;
+}
+
+.movie-poster {
+  display: block;
+  width: 140px;
+  height: 210px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #555;
+}
+
+/* Placeholder when TMDB has no poster image */
+.movie-poster.empty {
+  border: 1px dashed var(--page-text);
+  opacity: 0.4;
+}
+
+.movie-title {
+  margin: 8px 0 2px;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.movie-year {
+  margin: 0;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 13px;
+  opacity: 0.6;
 }
