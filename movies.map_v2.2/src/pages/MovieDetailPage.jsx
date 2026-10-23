@@ -11,7 +11,7 @@ import {
 } from '../api/tmdb'
 import './MovieDetailPage.css'
 
-// Turns "2018-04-25" into a readable date like "April 25, 2018"
+// zet een datum als "2018-04-25" om in een leesbare datum zoals: "April 25, 2018"
 function formatReleaseDate(dateText) {
   if (!dateText) return ''
   const date = new Date(dateText + 'T00:00:00')
@@ -23,7 +23,7 @@ function formatReleaseDate(dateText) {
   })
 }
 
-// Turns 149 minutes into "2h 29m"
+// zet 149 minuten om in "2h 29m"
 function formatRuntime(minutes) {
   if (!minutes) return ''
   const hours = Math.floor(minutes / 60)
@@ -33,12 +33,12 @@ function formatRuntime(minutes) {
   return hours + 'h ' + rest + 'm'
 }
 
-// Adds commas to big numbers: 33227 -> "33,227"
+// voegt komma's toe aan grote getallen: 33227 -> "33,227"
 function formatCount(number) {
   return Number(number).toLocaleString('en-US')
 }
 
-// One movie: loads it from TMDB and shows it with the shared DetailPage
+// een film die word geladen van TMDB en toont deze met de gedeelde DetailPage component
 function MovieDetailPage() {
   const { movieId } = useParams()
   const navigate = useNavigate()
@@ -48,7 +48,7 @@ function MovieDetailPage() {
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState(null)
 
-  // The home page snaps each section. Turn that off while this page is open.
+  // de homepage snappt naar elke sectie. zet dat uit terwijl deze pagina open is.
   useEffect(() => {
     document.documentElement.classList.add('no-snap')
     return () => {
@@ -56,7 +56,7 @@ function MovieDetailPage() {
     }
   }, [])
 
-  // Load this movie (and its cast) whenever the id in the URL changes
+  // laadt deze film (en zijn cast) wanneer de id in de URL verandert
   useEffect(() => {
     let ignore = false
 
@@ -67,7 +67,7 @@ function MovieDetailPage() {
       try {
         const movieData = await getMovie(movieId)
 
-        // The page still works if the credits call fails
+        // de pagina werkt nog steeds , zelfs als de credits-aanroep faalt
         let creditsData = null
         try {
           creditsData = await getMovieCredits(movieId)
@@ -96,7 +96,7 @@ function MovieDetailPage() {
     }
   }, [movieId])
 
-  // Back goes to the page they came from. A direct link falls back to Search.
+  // 'Back' gaat naar de laatste pagina waarde user vandaan komt. Een directe link gaat terug naar Search.
   function goBack() {
     const index = window.history.state && window.history.state.idx
     if (index > 0) {
@@ -111,14 +111,14 @@ function MovieDetailPage() {
     event.preventDefault()
   }
 
-  // Directors from the crew list (job must be exactly "Director")
+  // regisseurs vanuit de crew-lijst (job moet exact "Director" zijn)
   const directors = credits && credits.crew
     ? credits.crew
         .filter((person) => person.job === 'Director')
         .map((person) => person.name)
     : []
 
-  // First 12 cast members for the card grid
+  // eerste 12 cast-leden voor de card-grid
   const cast = credits && credits.cast
     ? credits.cast.slice(0, 12).map((person) => ({
         id: person.id,
@@ -128,7 +128,7 @@ function MovieDetailPage() {
       }))
     : []
 
-  // Build the fact rows, and skip anything that is missing
+  // opbouw v/d extra info-lijst, en alles dat dat ontbreekt word overgeslagen
   const facts = []
   if (movie) {
     if (movie.release_date) {
@@ -169,7 +169,7 @@ function MovieDetailPage() {
 
   return (
     <main className="movie-detail">
-      {/* Faded backdrop behind the top of the page */}
+      {/* faded movie-image background */}
       {backdrop && (
         <div
           className="movie-detail-backdrop"

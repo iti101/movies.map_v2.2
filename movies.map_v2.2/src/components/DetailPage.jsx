@@ -1,7 +1,6 @@
 import './DetailPage.css'
 
-// One card in the related list (cast, similar titles, and so on).
-// If onClick is missing, the card is a dead link for now.
+// een (info)Card in de gerelateerde lijst (cast, vergelijkbare titels, enzovoort).
 function RelatedCard({ item, onClick }) {
   const content = (
     <>
@@ -35,8 +34,7 @@ function RelatedCard({ item, onClick }) {
   )
 }
 
-// Shared layout for a movie, actor, or TV show page.
-// The page that uses this decides what each prop means.
+// gedeelde layout-opties voor een film, acteur of tv-show pagina.
 function DetailPage({
   image,
   title,
@@ -49,6 +47,7 @@ function DetailPage({
   relatedTitle,
   related,
   onRelatedClick,
+  children,
 }) {
   const items = related || []
   const factList = facts || []
@@ -123,6 +122,9 @@ function DetailPage({
           </div>
         )}
       </section>
+
+      {/* Extra content under cast (e.g. TV episodes) */}
+      {children}
     </article>
   )
 }

@@ -1,9 +1,9 @@
-/* Landing.css turns scroll-snap on for the whole page. This class switches it off. */
+/* Landing.css turns scroll-snap on for the whole page. lock vertical scrolling. zonder scroll-snap */
 html.no-snap {
   scroll-snap-type: none;
 }
 
-/* Room at the top so the fixed navbar does not cover the Back button */
+/* zorgt dat de vaste navigatiebalk de Back-button niet bedekt */
 .movie-detail {
   position: relative;
   isolation: isolate;
@@ -15,7 +15,7 @@ html.no-snap {
   overflow: hidden;
 }
 
-/* Soft, faded movie backdrop that fades out toward the bottom */
+/* faded movie-image background */
 .movie-detail-backdrop {
   position: absolute;
   top: 0;
@@ -42,7 +42,7 @@ html.no-snap {
   );
 }
 
-/* A little darker veil so text stays readable on light mode too */
+/* extra text-styling om de teks lessbaar te houden in light-mode*/
 .movie-detail-backdrop::after {
   content: '';
   position: absolute;

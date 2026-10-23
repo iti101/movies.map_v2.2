@@ -18,7 +18,7 @@ function NavBar() {
   const [isDark, setIsDark] = useState(false)
 
   const location = useLocation()
-  // true when we are on the landing page (hash links work there)
+  // 'true' wanneer we op de landingspagina zijn (hash links werken daar)
   const onHome = location.pathname === '/'
 
   // opent of sluit het menu

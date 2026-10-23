@@ -1,5 +1,4 @@
-// Remembers the last search while the app is open.
-// Useful when the user opens a movie and then presses Back.
+// onthoud de laatste zoekopdracht en resultaten terwijl de app open is.
 
 let savedQuery = ''
 let savedResults = []

@@ -1,4 +1,4 @@
-/* Poster on the left, title and facts on the right */
+/* poster links, titel, en extra info rechts */
 .detail-top {
   display: flex;
   gap: 40px;
@@ -15,7 +15,7 @@
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
 }
 
-/* Placeholder when there is no image */
+/* placeholder wanneer er geen afbeelding beschikbaar is */
 .detail-image.empty {
   border: 1px dashed var(--page-text);
   opacity: 0.4;
@@ -38,7 +38,7 @@
   line-height: 1.1;
 }
 
-/* Cursive / italic line under the title (movie tagline) */
+/* cursive tagline onder de titel */
 .detail-tagline {
   margin: 0 0 22px;
   color: var(--page-text);
@@ -48,7 +48,7 @@
   opacity: 0.85;
 }
 
-/* Label on the left, value on the right */
+/* label links, waarde rechts */
 .detail-facts {
   margin: 0;
   display: flex;
@@ -79,7 +79,7 @@
   font-weight: 500;
 }
 
-/* User rating sits under the fact list */
+/* user rating onder de extra info-lijst */
 .detail-rating {
   display: grid;
   grid-template-columns: 120px 1fr;
@@ -113,7 +113,7 @@
   opacity: 0.55;
 }
 
-/* Watch Trailer / Add to Watchlist row */
+/* 'Watch Trailer' / 'Add to Watchlist' row */
 .detail-actions {
   display: flex;
   flex-wrap: wrap;
@@ -121,7 +121,7 @@
   margin-top: 28px;
 }
 
-/* Softer pill buttons that match the reference image */
+/* pill buttons styling */
 .detail-actions .button {
   background: rgba(128, 128, 128, 0.35);
   color: var(--page-text);
@@ -138,7 +138,7 @@
   transform: translateY(0);
 }
 
-/* Storyline / biography block */
+/* Storyline / biography section */
 .detail-story {
   margin-top: 48px;
 }
@@ -162,7 +162,7 @@
   opacity: 0.9;
 }
 
-/* Cast / similar list under the storyline */
+/* Cast / similar list onder de storyline */
 .detail-related {
   margin-top: 40px;
 }
@@ -181,7 +181,7 @@
   gap: 20px;
 }
 
-/* Works for button cards and dead-link cards */
+/* button cards en dead-link cards */
 .detail-card {
   width: 140px;
   padding: 0;
@@ -229,7 +229,7 @@
   opacity: 0.6;
 }
 
-/* On a narrow screen, stack the poster above the text */
+/* styling aanpassingen (verticaal ipv horizontaal) voor (mobiele en/of) smalle schermen */
 @media (max-width: 700px) {
   .detail-top {
     flex-direction: column;

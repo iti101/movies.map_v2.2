@@ -1,4 +1,4 @@
-/* Full-screen Search section — bar starts in the middle of the page */
+/* Full-screen Search section — bar starts in het midden van de pagina */
 .search {
   height: 100vh;
   scroll-snap-align: start;
@@ -10,13 +10,13 @@
   box-sizing: border-box;
 }
 
-/* After a search, move the bar up so results can appear underneath */
+/* na een zoekopdracht, verplaats de balk omhoog zodat resultaten eronder kunnen verschijnen */
 .search.open {
   align-items: flex-start;
   padding-top: 80px;
 }
 
-/* Centers the title, field, and results as one column */
+/* centreert de titel, veld, en resultaten als één kolom */
 .search-box {
   display: flex;
   flex-direction: column;
@@ -25,12 +25,12 @@
   overflow: hidden;
 }
 
-/* Limit height when results are open so only the grid scrolls */
+/* beperk de hoogte wanneer resultaten open zijn, zodat alleen de grid scrollt */
 .search.open .search-box {
   max-height: calc(100vh - 80px);
 }
 
-/* Big "Search" title above the input */
+/* "Search" titel boven de search-bar */
 .search-title {
   margin: 0 0 16px;
   color: var(--page-text);
@@ -46,14 +46,14 @@
   }
 }
 
-/* Holds the input; the round button sits inside on the right */
+/* bevat de input; de ronde knop erin */
 .search-field {
   position: relative;
   width: min(100%, 420px);
   flex-shrink: 0;
 }
 
-/* Text field; extra right padding so text does not go under the button */
+/* search bar styling met extra rechter-ruimte zodat tekst niet onder de knop komt */
 .search-input {
   box-sizing: border-box;
   width: 100%;
@@ -76,7 +76,7 @@
   opacity: 0.5;
 }
 
-/* Round search button sits inside the right edge of the input */
+/* ronde zoekknop binnen de rechterrand van de input */
 .search-field .button {
   position: absolute;
   right: 6px;
@@ -84,7 +84,7 @@
   transform: translateY(-50%);
 }
 
-/* Keeps the hover lift working while the button stays vertically centered */
+/* houdt de hover lift werkend terwijl de knop verticaal centraal blijft */
 .search-field .button:hover:not(:disabled) {
   transform: translateY(calc(-50% - 2px));
 }
@@ -93,7 +93,7 @@
   transform: translateY(-50%);
 }
 
-/* Magnifying-glass icon sized for the small round button */
+/* 'magnifying-glass' icoon styling voor de kleine ronde knop */
 .search-icon {
   width: 16px;
   height: 16px;
@@ -101,12 +101,12 @@
   filter: invert(1);
 }
 
-/* In dark mode the button is light, so the dark icon is fine as-is */
+/* zoek-button styling in dark-mode */
 body.dark .search-icon {
   filter: none;
 }
 
-/* Loading / error / empty messages under the search bar */
+/* laadt / fout / lege berichten onder de search-bar */
 .search-message {
   margin: 20px 0 0;
   color: var(--page-text);
@@ -117,7 +117,36 @@ body.dark .search-icon {
   flex-shrink: 0;
 }
 
-/* Same width as 5 posters + gaps, so "See all" lines up with the grid */
+/* "Did you mean" typo hint onder de search bar */
+.search-did-you-mean {
+  margin: 12px 0 0;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 15px;
+  text-align: center;
+  opacity: 0.85;
+  flex-shrink: 0;
+}
+
+/* Clickable suggested title — net als een link, werkt als een knop */
+.search-suggestion {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--page-text);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.search-suggestion:hover {
+  opacity: 0.75;
+}
+
+/* resultaten area met een breedte van 5 posters.*/
 .results-area {
   width: min(100%, 780px);
   margin-top: 20px;
@@ -128,7 +157,7 @@ body.dark .search-icon {
   overflow: hidden;
 }
 
-/* Pushes the See all button to the right edge of the results */
+/* Plaatst de "See all" knop aan de rechterrand van de resultaten */
 .see-all-row {
   width: 100%;
   display: flex;
@@ -153,7 +182,7 @@ body.dark .search-icon {
   opacity: 0.85;
 }
 
-/* Poster grid under the search bar; scrollbar is hidden */
+/* poster grid onder de search-bar; scrollbalk is verborgen */
 .results {
   display: flex;
   flex-wrap: wrap;
@@ -168,12 +197,12 @@ body.dark .search-icon {
   scrollbar-width: none;
 }
 
-/* Hide scrollbar in Chrome / Safari / Edge */
+/* verberg scrollbalk in Chrome / Safari / Edge */
 .results::-webkit-scrollbar {
   display: none;
 }
 
-/* One movie card: poster + title + year */
+/* een movieCard: poster + titel + jaar */
 .movie {
   width: 140px;
   text-align: center;
@@ -195,7 +224,7 @@ body.dark .search-icon {
   background: #555;
 }
 
-/* Placeholder when TMDB has no poster image */
+/* placeholder voor wanneer TMDB geen poster heeft */
 .movie-poster.empty {
   border: 1px dashed var(--page-text);
   opacity: 0.4;
