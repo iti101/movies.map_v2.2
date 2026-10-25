@@ -16,13 +16,12 @@ function RelatedCard({ item, onClick }) {
 
   if (onClick) {
     return (
-      <button type="button" className="detail-card" onClick={() => onClick(item.id)}>
+      <button type="button" className="detail-card" onClick={() => onClick(item)}>
         {content}
       </button>
     )
   }
 
-  // Dead link until ActorDetailPage (or similar) is ready
   return (
     <a
       href="#"
@@ -114,7 +113,7 @@ function DetailPage({
           <div className="detail-related-list">
             {items.map((item) => (
               <RelatedCard
-                key={item.id}
+                key={(item.mediaType || 'item') + '-' + item.id}
                 item={item}
                 onClick={onRelatedClick}
               />

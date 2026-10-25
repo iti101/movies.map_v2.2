@@ -3,11 +3,15 @@
 let savedQuery = ''
 let savedResults = []
 let savedSearched = false
+let savedFilter = 'movies'
+let savedGenreId = null
 
-export function saveSearch(query, results, searched) {
+export function saveSearch(query, results, searched, filter, genreId) {
   savedQuery = query
   savedResults = results
   savedSearched = searched
+  if (filter !== undefined) savedFilter = filter
+  if (genreId !== undefined) savedGenreId = genreId
 }
 
 export function loadSearch() {
@@ -15,5 +19,7 @@ export function loadSearch() {
     query: savedQuery,
     results: savedResults,
     searched: savedSearched,
+    filter: savedFilter,
+    genreId: savedGenreId,
   }
 }

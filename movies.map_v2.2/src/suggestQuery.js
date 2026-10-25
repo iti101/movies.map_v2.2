@@ -5,6 +5,7 @@ const MIN_SIMILARITY = 0.75
 const MIN_QUERY_LENGTH = 3
 
 // Levenshtein edit-afstand tussen twee strings
+function levenshtein(a, b) {
   const rows = a.length + 1
   const cols = b.length + 1
   const matrix = Array.from({ length: rows }, () => new Array(cols).fill(0))

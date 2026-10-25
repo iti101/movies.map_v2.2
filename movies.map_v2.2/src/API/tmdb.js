@@ -105,28 +105,16 @@ export async function getSuggestionTitles() {
   }
 }
 
-// zoekt naar films die overeenkomen met de gegeven titel
-export async function searchMovies(query) {
-  // verwijder spaties aan het begin en einde
-  const text = query.trim()
-  if (!text) return []
-
-  // API key vanuit de .env file (moet beginnen met: "VITE_" om in de browser te werken)
+// gedeelde fetch helper voor TMDB GET-aanvragen
+async function tmdbGet(pathWithQuery, errorMessage) {
   const apiKey = import.meta.env.VITE_TMDB_API_KEY
   if (!apiKey) {
     throw new Error('Missing TMDB API key. Add VITE_TMDB_API_KEY to your .env file.')
   }
 
-  // bouw de volledige aanvraag URL met de zoektekst en de key
-  const url =
-    API_BASE +
-    '/search/movie?query=' +
-    encodeURIComponent(text) +
-    '&api_key=' +
-    apiKey +
-    '&include_adult=false&language=en-US&page=1'
+  const joiner = pathWithQuery.includes('?') ? '&' : '?'
+  const url = API_BASE + pathWithQuery + joiner + 'api_key=' + apiKey
 
-  // try to call the API
   let response
   try {
     response = await fetch(url)
@@ -134,16 +122,98 @@ export async function searchMovies(query) {
     throw new Error('Could not reach TMDB. Check your connection and try again.')
   }
 
-  // something went wrong on the server side
   if (!response.ok) {
-    throw new Error('Movie search failed. Please try again.')
+    throw new Error(errorMessage)
   }
 
-  // turn the JSON response into a normal JavaScript object
-  const data = await response.json()
+  return await response.json()
+}
 
-  // TMDB puts the movies in a "results" array
-  return data.results || []
+// zoekt naar films die overeenkomen met de gegeven titel
+export async function searchMovies(query) {
+  const text = query.trim()
+  if (!text) return []
+
+  const data = await tmdbGet(
+    '/search/movie?query=' +
+      encodeURIComponent(text) +
+      '&include_adult=false&language=en-US&page=1',
+    'Movie search failed. Please try again.'
+  )
+
+  return (data.results || []).map((item) => ({ ...item, media_type: 'movie' }))
+}
+
+// zoekt naar tv-series die overeenkomen met de gegeven titel
+export async function searchTv(query) {
+  const text = query.trim()
+  if (!text) return []
+
+  const data = await tmdbGet(
+    '/search/tv?query=' +
+      encodeURIComponent(text) +
+      '&include_adult=false&language=en-US&page=1',
+    'TV search failed. Please try again.'
+  )
+
+  return (data.results || []).map((item) => ({ ...item, media_type: 'tv' }))
+}
+
+// zoekt naar personen (acteurs, regisseurs, enzovoort)
+export async function searchPeople(query) {
+  const text = query.trim()
+  if (!text) return []
+
+  const data = await tmdbGet(
+    '/search/person?query=' +
+      encodeURIComponent(text) +
+      '&include_adult=false&language=en-US&page=1',
+    'People search failed. Please try again.'
+  )
+
+  return (data.results || [])
+    .filter((item) => item.adult !== true)
+    .map((item) => ({ ...item, media_type: 'person' }))
+}
+
+// laadt de film-genre lijst van TMDB (eenmalig cachebaar via de caller)
+export async function getMovieGenres() {
+  const data = await tmdbGet(
+    '/genre/movie/list?language=en-US',
+    'Could not load genres. Please try again.'
+  )
+  return data.genres || []
+}
+
+// ontdekt films uit een specifiek releasejaar
+export async function discoverMoviesByYear(year) {
+  const yearText = String(year).trim()
+  if (!/^\d{4}$/.test(yearText)) {
+    throw new Error('Enter a 4-digit year (e.g. 1999).')
+  }
+
+  const data = await tmdbGet(
+    '/discover/movie?primary_release_year=' +
+      yearText +
+      '&include_adult=false&language=en-US&sort_by=popularity.desc&page=1',
+    'Year search failed. Please try again.'
+  )
+
+  return (data.results || []).map((item) => ({ ...item, media_type: 'movie' }))
+}
+
+// ontdekt films in een specifiek genre (TMDB genre id)
+export async function discoverMoviesByGenre(genreId) {
+  if (!genreId) return []
+
+  const data = await tmdbGet(
+    '/discover/movie?with_genres=' +
+      genreId +
+      '&include_adult=false&language=en-US&sort_by=popularity.desc&page=1',
+    'Genre search failed. Please try again.'
+  )
+
+  return (data.results || []).map((item) => ({ ...item, media_type: 'movie' }))
 }
 
 // zoekt films, tv-series en personen in één aanroep (geen adult content)
@@ -343,6 +413,148 @@ export async function getTvSeason(tvId, seasonNumber) {
 
   if (!response.ok) {
     throw new Error('Could not load this season. Please try again.')
+  }
+
+  return await response.json()
+}
+
+// voorkeuren voor soort video (eerste match wint onder gelijke)
+const TRAILER_TYPE_RANK = {
+  Trailer: 0,
+  Teaser: 1,
+  Clip: 2,
+}
+
+// kiest de beste YouTube watch URL vanuit een TMDB videos.results array
+export function pickTrailerUrl(videos) {
+  if (!videos || videos.length === 0) return null
+
+  const youtube = videos.filter(
+    (video) => video && video.site === 'YouTube' && video.key
+  )
+  if (youtube.length === 0) return null
+
+  youtube.sort((a, b) => {
+    const rankA = TRAILER_TYPE_RANK[a.type]
+    const rankB = TRAILER_TYPE_RANK[b.type]
+    const typeA = rankA === undefined ? 99 : rankA
+    const typeB = rankB === undefined ? 99 : rankB
+    if (typeA !== typeB) return typeA - typeB
+
+    const officialA = a.official ? 0 : 1
+    const officialB = b.official ? 0 : 1
+    return officialA - officialB
+  })
+
+  return 'https://www.youtube.com/watch?v=' + youtube[0].key
+}
+
+// YouTube search fallback voor als TMDB geen trailer heeft
+export function youtubeTrailerSearchUrl(title) {
+  const query = ((title || '').trim() + ' trailer').trim()
+  return (
+    'https://www.youtube.com/results?search_query=' + encodeURIComponent(query)
+  )
+}
+
+// laadt trailers / teasers voor een film
+export async function getMovieVideos(movieId) {
+  const apiKey = import.meta.env.VITE_TMDB_API_KEY
+  if (!apiKey) {
+    throw new Error('Missing TMDB API key. Add VITE_TMDB_API_KEY to your .env file.')
+  }
+
+  const url =
+    API_BASE + '/movie/' + movieId + '/videos?api_key=' + apiKey + '&language=en-US'
+
+  let response
+  try {
+    response = await fetch(url)
+  } catch {
+    throw new Error('Could not reach TMDB. Check your connection and try again.')
+  }
+
+  if (!response.ok) {
+    throw new Error('Could not load trailers. Please try again.')
+  }
+
+  const data = await response.json()
+  return data.results || []
+}
+
+// laadt trailers / teasers voor een tv-serie
+export async function getTvVideos(tvId) {
+  const apiKey = import.meta.env.VITE_TMDB_API_KEY
+  if (!apiKey) {
+    throw new Error('Missing TMDB API key. Add VITE_TMDB_API_KEY to your .env file.')
+  }
+
+  const url =
+    API_BASE + '/tv/' + tvId + '/videos?api_key=' + apiKey + '&language=en-US'
+
+  let response
+  try {
+    response = await fetch(url)
+  } catch {
+    throw new Error('Could not reach TMDB. Check your connection and try again.')
+  }
+
+  if (!response.ok) {
+    throw new Error('Could not load trailers. Please try again.')
+  }
+
+  const data = await response.json()
+  return data.results || []
+}
+
+// laadt een persoon (acteur / regisseur) op basis van zijn TMDB id
+export async function getPerson(personId) {
+  const apiKey = import.meta.env.VITE_TMDB_API_KEY
+  if (!apiKey) {
+    throw new Error('Missing TMDB API key. Add VITE_TMDB_API_KEY to your .env file.')
+  }
+
+  const url =
+    API_BASE + '/person/' + personId + '?api_key=' + apiKey + '&language=en-US'
+
+  let response
+  try {
+    response = await fetch(url)
+  } catch {
+    throw new Error('Could not reach TMDB. Check your connection and try again.')
+  }
+
+  if (!response.ok) {
+    throw new Error('Could not load this person. Please try again.')
+  }
+
+  return await response.json()
+}
+
+// laadt film- en tv-credits voor een persoon (cast + crew)
+export async function getPersonCombinedCredits(personId) {
+  const apiKey = import.meta.env.VITE_TMDB_API_KEY
+  if (!apiKey) {
+    throw new Error('Missing TMDB API key. Add VITE_TMDB_API_KEY to your .env file.')
+  }
+
+  const url =
+    API_BASE +
+    '/person/' +
+    personId +
+    '/combined_credits?api_key=' +
+    apiKey +
+    '&language=en-US'
+
+  let response
+  try {
+    response = await fetch(url)
+  } catch {
+    throw new Error('Could not reach TMDB. Check your connection and try again.')
+  }
+
+  if (!response.ok) {
+    throw new Error('Could not load credits. Please try again.')
   }
 
   return await response.json()

@@ -91,7 +91,7 @@
 .detail-rating-label {
   margin: 0;
   color: var(--page-text);
-  font-family: var(--heading);
+  font-family: 'Fraunces', Georgia, serif;
   font-size: 14px;
   opacity: 0.55;
 }
@@ -99,7 +99,7 @@
 .detail-rating-score {
   margin: 0;
   color: var(--page-text);
-  font-family: var(--heading);
+  font-family: 'Fraunces', Georgia, serif;
   font-size: 28px;
   font-weight: 600;
   line-height: 1.1;
@@ -108,7 +108,7 @@
 .detail-rating-count {
   margin: 4px 0 0;
   color: var(--page-text);
-  font-family: var(--heading);
+  font-family: 'Fraunces', Georgia, serif;
   font-size: 13px;
   opacity: 0.55;
 }

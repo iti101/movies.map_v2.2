@@ -1,0 +1,44 @@
+/* een movieCard: poster + titel + jaar */
+.movie {
+  width: 140px;
+  text-align: center;
+  text-decoration: none;
+  color: inherit;
+  cursor: pointer;
+}
+
+.movie:hover .movie-poster {
+  opacity: 0.85;
+}
+
+.movie-poster {
+  display: block;
+  width: 140px;
+  height: 210px;
+  object-fit: cover;
+  border-radius: 8px;
+  background: #555;
+}
+
+/* placeholder voor wanneer TMDB geen poster heeft */
+.movie-poster.empty {
+  border: 1px dashed var(--page-text);
+  opacity: 0.4;
+}
+
+.movie-title {
+  margin: 8px 0 2px;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+.movie-year {
+  margin: 0;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 13px;
+  opacity: 0.6;
+}

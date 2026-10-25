@@ -1,45 +1,26 @@
 import { useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import Button from '../components/Button'
-import { searchMulti, posterUrl, profileUrl, getSuggestionTitles } from '../api/tmdb'
+import ResultCard from '../components/ResultCard'
+import {
+  getMovieGenres,
+  getSuggestionTitles,
+} from '../api/tmdb'
+import { fetchForFilter, SEARCH_PLACEHOLDERS } from '../runSearchQuery'
 import { findSuggestion } from '../suggestQuery'
 import { loadSearch, saveSearch } from '../searchMemory'
 import searchIcon from '../assets/MagnifyingGlass.svg'
 import './Search.css'
 
-// normaliseert een multi-search resultaat voor de poster-grid
-function getResultDisplay(item) {
-  // oude session-cache had alleen films zonder media_type
-  const type = item.media_type || 'movie'
+const FILTERS = [
+  { id: 'movies', label: 'Movies' },
+  { id: 'tv', label: 'TVShows' },
+  { id: 'people', label: 'People' },
+  { id: 'year', label: 'Release year' },
+  { id: 'genre', label: 'Genre' },
+]
 
-  if (type === 'movie') {
-    return {
-      title: item.title,
-      info: item.release_date ? item.release_date.slice(0, 4) : '',
-      image: posterUrl(item.poster_path),
-      to: '/movie/' + item.id,
-    }
-  }
-
-  if (type === 'tv') {
-    return {
-      title: item.name,
-      info: item.first_air_date ? item.first_air_date.slice(0, 4) : '',
-      image: posterUrl(item.poster_path),
-      to: '/tv/' + item.id,
-    }
-  }
-
-  // person (actor / actress / director, enzovoort) — geen detailpagina nog
-  return {
-    title: item.name,
-    info: item.known_for_department || 'Person',
-    image: profileUrl(item.profile_path),
-    to: null,
-  }
-}
-
-// Search section: title, search bar, and a poster grid of results
+// Search section: title, search bar, filter pills, and a poster grid of results
 function Search() {
   // start vanaf de laatste zoekopdracht, zodat Back van een film dezelfde resultaten toont
   const saved = loadSearch()
@@ -58,6 +39,15 @@ function Search() {
 
   // true after the user has submitted at least one search
   const [searched, setSearched] = useState(saved.searched)
+
+  // actieve filter-pill (één tegelijk)
+  const [filter, setFilter] = useState(saved.filter || 'movies')
+
+  // geselecteerd genre id (alleen relevant in genre-modus)
+  const [selectedGenreId, setSelectedGenreId] = useState(saved.genreId)
+
+  // TMDB genre lijst voor de #hashtag knoppen
+  const [genres, setGenres] = useState([])
 
   // "Did you mean" near-miss title, or null when hidden
   const [suggestion, setSuggestion] = useState(null)
@@ -82,8 +72,32 @@ function Search() {
     }
   }, [])
 
-  // while typing / after search: debounced "Did you mean" (local list + spelling fallback)
+  // laad genres wanneer Genre-filter actief wordt
   useEffect(() => {
+    if (filter !== 'genre') return
+
+    let cancelled = false
+
+    getMovieGenres()
+      .then((list) => {
+        if (!cancelled) setGenres(list)
+      })
+      .catch((err) => {
+        if (!cancelled) setError(err.message)
+      })
+
+    return () => {
+      cancelled = true
+    }
+  }, [filter])
+
+  // while typing / after search: debounced "Did you mean" (alleen voor titel-zoeken)
+  useEffect(() => {
+    if (filter !== 'movies' && filter !== 'tv' && filter !== 'genre') {
+      setSuggestion(null)
+      return
+    }
+
     if (loading || error) {
       setSuggestion(null)
       return
@@ -106,12 +120,18 @@ function Search() {
       cancelled = true
       clearTimeout(timer)
     }
-  }, [query, loading, error, titles])
+  }, [query, loading, error, titles, filter])
 
-  // shared search runner (form submit + "Did you mean" click)
-  async function runSearch(text) {
+  // shared search runner (form submit + "Did you mean" + genre click)
+  async function runSearch(text, activeFilter = filter, genreId = selectedGenreId) {
     const trimmed = text.trim()
-    if (!trimmed) return
+
+    if (activeFilter === 'genre') {
+      // genre-modus heeft óf een titel óf een gekozen genre nodig
+      if (!trimmed && !genreId) return
+    } else if (!trimmed) {
+      return
+    }
 
     setLoading(true)
     setError(null)
@@ -119,13 +139,12 @@ function Search() {
     setSuggestion(null)
 
     try {
-      const items = await searchMulti(trimmed)
+      const items = await fetchForFilter(activeFilter, text, genreId)
       setResults(items)
-      saveSearch(trimmed, items, true)
-      // suggestion is resolved by the debounce effect once loading is false
+      saveSearch(text, items, true, activeFilter, genreId)
     } catch (err) {
       setResults([])
-      saveSearch(trimmed, [], true)
+      saveSearch(text, [], true, activeFilter, genreId)
       setError(err.message)
       setSuggestion(null)
     } finally {
@@ -133,10 +152,30 @@ function Search() {
     }
   }
 
+  // wisselt naar een andere filter-pill; wist resultaten voor een schone start
+  function handleFilterChange(nextFilter) {
+    if (nextFilter === filter) return
+
+    setFilter(nextFilter)
+    setQuery('')
+    setResults([])
+    setError(null)
+    setSearched(false)
+    setSuggestion(null)
+    setSelectedGenreId(null)
+    saveSearch('', [], false, nextFilter, null)
+  }
+
   // runs when the user submits the form (Enter or the search button)
   async function handleSubmit(event) {
     event.preventDefault()
     await runSearch(query)
+  }
+
+  // past een genre-hashtag toe; behoudt de huidige titel als die er is
+  async function handleGenreClick(genre) {
+    setSelectedGenreId(genre.id)
+    await runSearch(query, 'genre', genre.id)
   }
 
   // applies the "Did you mean" title and searches again
@@ -160,9 +199,10 @@ function Search() {
           <input
             type="text"
             className="search-input"
-            placeholder="Search movies, shows, people..."
+            placeholder={SEARCH_PLACEHOLDERS[filter]}
             value={query}
             onChange={(event) => setQuery(event.target.value)}
+            inputMode={filter === 'year' ? 'numeric' : 'text'}
             disabled={loading}
           />
           <Button shape="round" size="small" type="submit" disabled={loading}>
@@ -170,7 +210,47 @@ function Search() {
           </Button>
         </form>
 
-        {/* status berichten onder de zoekbalk */}
+        {/* filter pills: één actieve modus tegelijk */}
+        <div className="search-filters" role="group" aria-label="Search filters">
+          {FILTERS.map((item) => (
+            <button
+              key={item.id}
+              type="button"
+              className={
+                filter === item.id
+                  ? 'search-filter-pill active'
+                  : 'search-filter-pill'
+              }
+              onClick={() => handleFilterChange(item.id)}
+              disabled={loading}
+            >
+              {item.label}
+            </button>
+          ))}
+        </div>
+
+        {/* genre hashtags — alleen zichtbaar wanneer Genre actief is */}
+        {filter === 'genre' && genres.length > 0 && (
+          <div className="search-genres" role="group" aria-label="Genres">
+            {genres.map((genre) => (
+              <button
+                key={genre.id}
+                type="button"
+                className={
+                  selectedGenreId === genre.id
+                    ? 'search-genre-link active'
+                    : 'search-genre-link'
+                }
+                onClick={() => handleGenreClick(genre)}
+                disabled={loading}
+              >
+                #{genre.name.replace(/\s+/g, '')}
+              </button>
+            ))}
+          </div>
+        )}
+
+        {/* status berichten onder de search-bar */}
         {error && <p className="search-message">{error}</p>}
         {!error && loading && <p className="search-message">Searching...</p>}
         {!error && !loading && searched && results.length === 0 && (
@@ -193,56 +273,16 @@ function Search() {
         {/* poster grid + 'alle resultaten' (alleen wanneer er resultaten zijn) */}
         {hasResults && (
           <div className="results-area">
-            {/* Dead link for now — later this goes to movieResultsPage */}
             <div className="see-all-row">
-              <a
-                href="#"
-                className="see-all"
-                onClick={(event) => event.preventDefault()}
-              >
+              <Link to="/results" className="see-all">
                 See all
-              </a>
+              </Link>
             </div>
 
             <div className="results">
               {results.map((item) => {
-                const display = getResultDisplay(item)
                 const key = (item.media_type || 'movie') + '-' + item.id
-
-                const content = (
-                  <>
-                    {display.image ? (
-                      <img src={display.image} alt="" className="movie-poster" />
-                    ) : (
-                      <div className="movie-poster empty" />
-                    )}
-                    <p className="movie-title">{display.title}</p>
-                    {display.info && (
-                      <p className="movie-year">{display.info}</p>
-                    )}
-                  </>
-                )
-
-                // films en series gaan naar hun detailpagina
-                if (display.to) {
-                  return (
-                    <Link key={key} to={display.to} className="movie">
-                      {content}
-                    </Link>
-                  )
-                }
-
-                // personen: dead link tot ActorDetailPage klaar is
-                return (
-                  <a
-                    key={key}
-                    href="#"
-                    className="movie"
-                    onClick={(event) => event.preventDefault()}
-                  >
-                    {content}
-                  </a>
-                )
+                return <ResultCard key={key} item={item} />
               })}
             </div>
           </div>

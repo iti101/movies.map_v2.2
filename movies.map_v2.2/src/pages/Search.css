@@ -53,7 +53,7 @@
   flex-shrink: 0;
 }
 
-/* search bar styling met extra rechter-ruimte zodat tekst niet onder de knop komt */
+/* search bar styling */
 .search-input {
   box-sizing: border-box;
   width: 100%;
@@ -84,6 +84,84 @@
   transform: translateY(-50%);
 }
 
+/* rij met filter-buttons onder de zoekbalk */
+.search-filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  width: min(100%, 520px);
+  margin-top: 16px;
+  flex-shrink: 0;
+}
+
+/* filter-button styling */
+.search-filter-pill {
+  padding: 6px 14px;
+  border: 1px solid var(--page-text);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, opacity 0.2s;
+}
+
+.search-filter-pill:hover:not(:disabled) {
+  opacity: 0.75;
+}
+
+.search-filter-pill.active {
+  background: var(--page-text);
+  color: var(--page-bg);
+}
+
+.search-filter-pill:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* #genres (onder de Genre-button) */
+.search-genres {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 12px;
+  width: min(100%, 560px);
+  margin-top: 14px;
+  flex-shrink: 0;
+}
+
+.search-genre-link {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.search-genre-link:hover:not(:disabled) {
+  opacity: 1;
+}
+
+.search-genre-link.active {
+  opacity: 1;
+  font-weight: 600;
+}
+
+.search-genre-link:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
 /* houdt de hover lift werkend terwijl de knop verticaal centraal blijft */
 .search-field .button:hover:not(:disabled) {
   transform: translateY(calc(-50% - 2px));
@@ -97,11 +175,11 @@
 .search-icon {
   width: 16px;
   height: 16px;
-  /* Dark SVG on a dark button in light mode — flip it so it shows */
+  /* Dark SVG op een donkere button in light mode */
   filter: invert(1);
 }
 
-/* zoek-button styling in dark-mode */
+/* zoek-button in dark-mode */
 body.dark .search-icon {
   filter: none;
 }
@@ -166,7 +244,7 @@ body.dark .search-icon {
   flex-shrink: 0;
 }
 
-/* Small pill link (dead link for now) */
+/* Small pill link naar de ResultsPage */
 .see-all {
   padding: 6px 14px;
   border-radius: 999px;
@@ -200,49 +278,4 @@ body.dark .search-icon {
 /* verberg scrollbalk in Chrome / Safari / Edge */
 .results::-webkit-scrollbar {
   display: none;
-}
-
-/* een movieCard: poster + titel + jaar */
-.movie {
-  width: 140px;
-  text-align: center;
-  text-decoration: none;
-  color: inherit;
-  cursor: pointer;
-}
-
-.movie:hover .movie-poster {
-  opacity: 0.85;
-}
-
-.movie-poster {
-  display: block;
-  width: 140px;
-  height: 210px;
-  object-fit: cover;
-  border-radius: 8px;
-  background: #555;
-}
-
-/* placeholder voor wanneer TMDB geen poster heeft */
-.movie-poster.empty {
-  border: 1px dashed var(--page-text);
-  opacity: 0.4;
-}
-
-.movie-title {
-  margin: 8px 0 2px;
-  color: var(--page-text);
-  font-family: var(--heading);
-  font-size: 14px;
-  font-weight: 500;
-  line-height: 1.3;
-}
-
-.movie-year {
-  margin: 0;
-  color: var(--page-text);
-  font-family: var(--heading);
-  font-size: 13px;
-  opacity: 0.6;
 }

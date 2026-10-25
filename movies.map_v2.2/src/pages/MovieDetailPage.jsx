@@ -5,6 +5,9 @@ import DetailPage from '../components/DetailPage'
 import {
   getMovie,
   getMovieCredits,
+  getMovieVideos,
+  pickTrailerUrl,
+  youtubeTrailerSearchUrl,
   posterUrl,
   backdropUrl,
   profileUrl,
@@ -106,9 +109,30 @@ function MovieDetailPage() {
     }
   }
 
-  // Dead link for now — watchlist / trailer come later
+  // Dead link for now — watchlist comes later
   function doNothing(event) {
     event.preventDefault()
+  }
+
+  function openPerson(item) {
+    if (!item) return
+    navigate('/person/' + item.id)
+  }
+
+  // Opens the TMDB trailer on YouTube, or a YouTube search if none is listed
+  async function watchTrailer() {
+    if (!movie) return
+
+    let url = youtubeTrailerSearchUrl(movie.title)
+    try {
+      const videos = await getMovieVideos(movieId)
+      const trailerUrl = pickTrailerUrl(videos)
+      if (trailerUrl) url = trailerUrl
+    } catch {
+      // keep search fallback
+    }
+
+    window.open(url, '_blank', 'noopener,noreferrer')
   }
 
   // regisseurs vanuit de crew-lijst (job moet exact "Director" zijn)
@@ -193,13 +217,14 @@ function MovieDetailPage() {
             actions={
               <>
                 <Button onClick={doNothing}>Add to Watchlist</Button>
-                <Button onClick={doNothing}>Watch Trailer</Button>
+                <Button onClick={watchTrailer}>Watch Trailer</Button>
               </>
             }
             textTitle="Storyline"
             text={movie.overview}
             relatedTitle="Cast"
             related={cast}
+            onRelatedClick={openPerson}
           />
         )}
       </div>
