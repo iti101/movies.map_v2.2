@@ -8,4 +8,9 @@ export default defineConfig({
     react(),
     babel({ presets: [reactCompilerPreset()] })
   ],
+  // NOVI Dynamic API staat alleen CORS toe vanaf localhost:5173 (of 3000)
+  server: {
+    port: 5173,
+    strictPort: true,
+  },
 })

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import Button from '../components/Button'
 import DetailPage from '../components/DetailPage'
+import { useAuth } from '../AuthContext.jsx'
 import {
   getTvShow,
   getTvCredits,
@@ -53,6 +54,7 @@ function pickDefaultSeason(seasons) {
 function TvShowDetailPage() {
   const { tvId } = useParams()
   const navigate = useNavigate()
+  const { isLoggedIn, openLogin } = useAuth()
 
   const [show, setShow] = useState(null)
   const [credits, setCredits] = useState(null)
@@ -164,9 +166,23 @@ function TvShowDetailPage() {
     }
   }
 
-  // Dead link for now — watchlist comes later
-  function doNothing(event) {
-    event.preventDefault()
+  // opent login als je uitgelogd bent, anders ga je naar WatchlistPage met deze serie
+  function handleAddToWatchlist() {
+    if (!isLoggedIn) {
+      openLogin()
+      return
+    }
+    if (!show) return
+    navigate('/watchlist', {
+      state: {
+        pendingItem: {
+          mediaType: 'tv',
+          mediaId: show.id,
+          title: show.name,
+          posterPath: show.poster_path,
+        },
+      },
+    })
   }
 
   function openPerson(item) {
@@ -272,7 +288,7 @@ function TvShowDetailPage() {
             rating={rating}
             actions={
               <>
-                <Button onClick={doNothing}>Add to Watchlist</Button>
+                <Button onClick={handleAddToWatchlist}>Add to Watchlist</Button>
                 <Button onClick={watchTrailer}>Watch Trailer</Button>
               </>
             }

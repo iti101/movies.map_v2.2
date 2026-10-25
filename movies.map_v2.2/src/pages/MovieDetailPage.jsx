@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import Button from '../components/Button'
 import DetailPage from '../components/DetailPage'
+import { useAuth } from '../AuthContext.jsx'
 import {
   getMovie,
   getMovieCredits,
@@ -45,6 +46,7 @@ function formatCount(number) {
 function MovieDetailPage() {
   const { movieId } = useParams()
   const navigate = useNavigate()
+  const { isLoggedIn, openLogin } = useAuth()
 
   const [movie, setMovie] = useState(null)
   const [credits, setCredits] = useState(null)
@@ -109,9 +111,23 @@ function MovieDetailPage() {
     }
   }
 
-  // Dead link for now — watchlist comes later
-  function doNothing(event) {
-    event.preventDefault()
+  // opent login als je uitgelogd bent, anders ga je naar WatchlistPage met deze film
+  function handleAddToWatchlist() {
+    if (!isLoggedIn) {
+      openLogin()
+      return
+    }
+    if (!movie) return
+    navigate('/watchlist', {
+      state: {
+        pendingItem: {
+          mediaType: 'movie',
+          mediaId: movie.id,
+          title: movie.title,
+          posterPath: movie.poster_path,
+        },
+      },
+    })
   }
 
   function openPerson(item) {
@@ -216,7 +232,7 @@ function MovieDetailPage() {
             rating={rating}
             actions={
               <>
-                <Button onClick={doNothing}>Add to Watchlist</Button>
+                <Button onClick={handleAddToWatchlist}>Add to Watchlist</Button>
                 <Button onClick={watchTrailer}>Watch Trailer</Button>
               </>
             }

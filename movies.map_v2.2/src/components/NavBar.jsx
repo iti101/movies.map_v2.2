@@ -5,18 +5,17 @@ import loginIcon from '../assets/login_opsz24.svg'
 import logoutIcon from '../assets/logout_opsz24.svg'
 import darkModeIcon from '../assets/dark_mode_opsz24.svg'
 import lightModeIcon from '../assets/light_mode_opsz24.svg'
+import { useAuth } from '../AuthContext.jsx'
 
 
 function NavBar() {
   // state van menu (open/gesloten)
   const [isOpen, setIsOpen] = useState(false)
 
-  // state van login/logout icon
-  const [isLoggedIn, setIsLoggedIn] = useState(false)
-
   // state van dark/light-mode
   const [isDark, setIsDark] = useState(false)
 
+  const { isLoggedIn, openLogin, logout } = useAuth()
   const location = useLocation()
   // 'true' wanneer we op de landingspagina zijn (hash links werken daar)
   const onHome = location.pathname === '/'
@@ -33,9 +32,13 @@ function NavBar() {
     document.body.style.overflow = 'auto'
   }
 
-  // verwisselt de login en logout icon (modal wordt later toegevoegd)
-  function toggleAuthIcon() {
-    setIsLoggedIn(!isLoggedIn)
+  // uitgelogd: open modal; ingelogd: wis sessie
+  function handleAuthClick() {
+    if (isLoggedIn) {
+      logout()
+      return
+    }
+    openLogin()
   }
 
   // schakelt tussen light en dark mode door de "dark" class toe te voegen/verwijderen op de body
@@ -67,7 +70,7 @@ function NavBar() {
           </button>
 
           {/* Login/logout icon button (top right) */}
-          <button className="icon-button" onClick={toggleAuthIcon}>
+          <button className="icon-button" onClick={handleAuthClick}>
             <img
               src={isLoggedIn ? logoutIcon : loginIcon}
               alt=""
@@ -116,9 +119,11 @@ function NavBar() {
               </Link>
             )}
           </li>
-          {/* Not linked yet: will open the profile page or the login modal later */}
           <li>
-            <span className="dead-link">My Watchlist</span>
+            {/* link naar de pagina met al je watchlists */}
+            <Link to="/watchlist" onClick={closeMenu}>
+              My Watchlist
+            </Link>
           </li>
         </ul>
       </nav>

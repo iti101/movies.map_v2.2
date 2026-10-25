@@ -1,0 +1,134 @@
+/* volledige pagina met ruimte onder de vaste navbar */
+.watchlist-page {
+  box-sizing: border-box;
+  min-height: 100vh;
+  padding: 88px 24px 64px;
+  background: var(--page-bg);
+  color: var(--page-text);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.watchlist-page-title {
+  margin: 0 0 28px;
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 500;
+  font-size: 36px;
+  line-height: 1.2;
+  color: var(--page-text);
+  text-align: center;
+}
+
+/* midden-uitlijning van de 'log in'-prompt */
+.watchlist-page-signed-out {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 16px;
+}
+
+.watchlist-page-message {
+  margin: 0 0 20px;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 15px;
+  opacity: 0.75;
+  text-align: center;
+}
+
+/* balk die toont welke titel je wilt toevoegen */
+.watchlist-pending {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px 16px;
+  width: min(100%, 640px);
+  margin-bottom: 24px;
+  padding: 14px 18px;
+  border: 1px solid color-mix(in srgb, var(--page-text) 20%, transparent);
+  border-radius: 16px;
+  box-sizing: border-box;
+}
+
+.watchlist-pending-text {
+  margin: 0;
+  font-family: var(--heading);
+  font-size: 15px;
+  color: var(--page-text);
+}
+
+/* formulier om een nieuwe watchlist-naam in te vullen */
+.watchlist-create {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  width: min(100%, 480px);
+  margin-bottom: 32px;
+}
+
+.watchlist-create-input {
+  box-sizing: border-box;
+  flex: 1 1 200px;
+  min-width: 0;
+  padding: 12px 16px;
+  border: 1px solid var(--page-text);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 16px;
+  outline: none;
+}
+
+.watchlist-create-input:disabled {
+  opacity: 0.6;
+}
+
+.watchlist-create-input::placeholder {
+  color: var(--page-text);
+  opacity: 0.5;
+}
+
+/* één watchlist met titel en poster-grid */
+.watchlist-section {
+  width: min(100%, 900px);
+  margin-bottom: 40px;
+}
+
+.watchlist-section-header {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-bottom: 16px;
+}
+
+.watchlist-section-title {
+  margin: 0;
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 500;
+  font-size: 24px;
+  line-height: 1.2;
+  color: var(--page-text);
+}
+
+.watchlist-empty {
+  margin: 0;
+  font-family: var(--heading);
+  font-size: 14px;
+  opacity: 0.65;
+}
+
+/* poster-grid van titels in een watchlist */
+.watchlist-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 140px);
+  justify-content: center;
+  gap: 20px;
+  width: 100%;
+}
