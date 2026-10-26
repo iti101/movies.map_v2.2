@@ -185,6 +185,15 @@ export async function getMovieGenres() {
   return data.genres || []
 }
 
+// laadt de tv-genre lijst van TMDB
+export async function getTvGenres() {
+  const data = await tmdbGet(
+    '/genre/tv/list?language=en-US',
+    'Could not load genres. Please try again.'
+  )
+  return data.genres || []
+}
+
 // ontdekt films uit een specifiek releasejaar
 export async function discoverMoviesByYear(year) {
   const yearText = String(year).trim()
@@ -214,6 +223,45 @@ export async function discoverMoviesByGenre(genreId) {
   )
 
   return (data.results || []).map((item) => ({ ...item, media_type: 'movie' }))
+}
+
+/**
+ * Discover movies or TV with Randomizer filters.
+ * @param {{ mediaType: 'movie'|'tv', withGenreId?: number|string, withoutGenreId?: number|string, personId?: number|string, page?: number }} params
+ * @returns {Promise<{ results: object[], totalPages: number, page: number }>}
+ */
+export async function discoverRandom({
+  mediaType,
+  withGenreId,
+  withoutGenreId,
+  personId,
+  page = 1,
+}) {
+  const path = mediaType === 'tv' ? '/discover/tv' : '/discover/movie'
+  const type = mediaType === 'tv' ? 'tv' : 'movie'
+
+  let query =
+    path +
+    '?include_adult=false&language=en-US&sort_by=popularity.desc&page=' +
+    Math.max(1, page)
+
+  if (withGenreId) {
+    query += '&with_genres=' + encodeURIComponent(String(withGenreId))
+  }
+  if (withoutGenreId) {
+    query += '&without_genres=' + encodeURIComponent(String(withoutGenreId))
+  }
+  if (personId) {
+    query += '&with_people=' + encodeURIComponent(String(personId))
+  }
+
+  const data = await tmdbGet(query, 'Could not find a suggestion. Please try again.')
+
+  return {
+    results: (data.results || []).map((item) => ({ ...item, media_type: type })),
+    totalPages: data.total_pages || 1,
+    page: data.page || page,
+  }
 }
 
 // zoekt films, tv-series en personen in één aanroep (geen adult content)

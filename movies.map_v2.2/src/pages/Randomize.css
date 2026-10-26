@@ -6,5 +6,184 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  box-sizing: border-box;
+  overflow: hidden;
+  padding: 80px 16px 24px;
+}
+
+.randomize-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(90%, 640px);
+  max-height: calc(100vh - 104px);
+  overflow-y: auto;
+  text-align: center;
+}
+
+.randomize-title {
+  margin: 0 0 20px;
+  color: var(--page-text);
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 500;
   font-size: 48px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1024px) {
+  .randomize-title {
+    font-size: 40px;
+  }
+}
+
+.randomize-step {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100%;
+  gap: 16px;
+}
+
+.randomize-question {
+  margin: 0;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 18px;
+  font-weight: 500;
+  line-height: 1.4;
+  max-width: 36ch;
+}
+
+.randomize-choices {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 12px;
+}
+
+.randomize-choice {
+  min-width: 120px;
+  padding: 10px 24px;
+  border: 1px solid var(--page-text);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 16px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, opacity 0.2s;
+}
+
+.randomize-choice:hover {
+  background: var(--page-text);
+  color: var(--page-bg);
+}
+
+.randomize-genres {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 12px;
+  width: 100%;
+}
+
+.randomize-genre-link {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.randomize-genre-link:hover {
+  opacity: 1;
+}
+
+.randomize-person-form {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  width: 100%;
+}
+
+.randomize-person-input {
+  box-sizing: border-box;
+  width: min(100%, 280px);
+  padding: 10px 16px;
+  border: 1px solid var(--page-text);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 15px;
+  outline: none;
+}
+
+.randomize-person-input::placeholder {
+  color: var(--page-text);
+  opacity: 0.5;
+}
+
+.randomize-person-input:disabled {
+  opacity: 0.6;
+}
+
+.randomize-people {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  width: 100%;
+}
+
+.randomize-person-chip {
+  padding: 6px 14px;
+  border: 1px solid var(--page-text);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, opacity 0.2s;
+}
+
+.randomize-person-chip:hover {
+  background: var(--page-text);
+  color: var(--page-bg);
+}
+
+.randomize-nav {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 10px;
+  margin-top: 4px;
+}
+
+.randomize-result .randomize-card {
+  margin: 4px 0;
+}
+
+.randomize-message {
+  margin: 0;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 15px;
+  opacity: 0.75;
+}
+
+.randomize-error {
+  margin-top: 12px;
+  opacity: 0.9;
 }
