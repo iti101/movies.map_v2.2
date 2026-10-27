@@ -1,10 +1,281 @@
-/* Full-screen Search section, colored by the current light/dark mode */
+/* Full-screen Search section — bar starts in het midden van de pagina */
 .search {
   height: 100vh;
   scroll-snap-align: start;
   background-color: var(--page-bg);
   display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: 48px;
+  align-items: center;
+  overflow: hidden;
+  box-sizing: border-box;
+}
+
+/* na een zoekopdracht, verplaats de balk omhoog zodat resultaten eronder kunnen verschijnen */
+.search.open {
+  align-items: flex-start;
+  padding-top: 80px;
+}
+
+/* centreert de titel, veld, en resultaten als één kolom */
+.search-box {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: min(90%, 900px);
+  overflow: hidden;
+}
+
+/* beperk de hoogte wanneer resultaten open zijn, zodat alleen de grid scrollt */
+.search.open .search-box {
+  max-height: calc(100vh - 80px);
+}
+
+/* "Search" titel boven de search-bar */
+.search-title {
+  margin: 0 0 16px;
+  color: var(--page-text);
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 500;
+  font-size: 60px;
+  flex-shrink: 0;
+}
+
+@media (max-width: 1024px) {
+  .search-title {
+    font-size: 50px;
+  }
+}
+
+/* bevat de input; de ronde knop erin */
+.search-field {
+  position: relative;
+  width: min(100%, 420px);
+  flex-shrink: 0;
+}
+
+/* search bar styling */
+.search-input {
+  box-sizing: border-box;
+  width: 100%;
+  padding: 12px 48px 12px 16px;
+  border: 1px solid var(--page-text);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 16px;
+  outline: none;
+}
+
+.search-input:disabled {
+  opacity: 0.6;
+}
+
+.search-input::placeholder {
+  color: var(--page-text);
+  opacity: 0.5;
+}
+
+/* ronde zoekknop binnen de rechterrand van de input */
+.search-field .button {
+  position: absolute;
+  right: 6px;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+/* rij met filter-buttons onder de zoekbalk */
+.search-filters {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+  width: min(100%, 520px);
+  margin-top: 16px;
+  flex-shrink: 0;
+}
+
+/* filter-button styling */
+.search-filter-pill {
+  padding: 6px 14px;
+  border: 1px solid var(--page-text);
+  border-radius: 999px;
+  background: transparent;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 13px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, color 0.2s, opacity 0.2s;
+}
+
+.search-filter-pill:hover:not(:disabled) {
+  opacity: 0.75;
+}
+
+.search-filter-pill.active {
+  background: var(--page-text);
+  color: var(--page-bg);
+}
+
+.search-filter-pill:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* #genres (onder de Genre-button) */
+.search-genres {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 6px 12px;
+  width: min(100%, 560px);
+  margin-top: 14px;
+  flex-shrink: 0;
+}
+
+.search-genre-link {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+  opacity: 0.7;
+}
+
+.search-genre-link:hover:not(:disabled) {
+  opacity: 1;
+}
+
+.search-genre-link.active {
+  opacity: 1;
+  font-weight: 600;
+}
+
+.search-genre-link:disabled {
+  opacity: 0.4;
+  cursor: not-allowed;
+}
+
+/* houdt de hover lift werkend terwijl de knop verticaal centraal blijft */
+.search-field .button:hover:not(:disabled) {
+  transform: translateY(calc(-50% - 2px));
+}
+
+.search-field .button:active:not(:disabled) {
+  transform: translateY(-50%);
+}
+
+/* 'magnifying-glass' icoon styling voor de kleine ronde knop */
+.search-icon {
+  width: 16px;
+  height: 16px;
+  /* Dark SVG op een donkere button in light mode */
+  filter: invert(1);
+}
+
+/* zoek-button in dark-mode */
+body.dark .search-icon {
+  filter: none;
+}
+
+/* laadt / fout / lege berichten onder de search-bar */
+.search-message {
+  margin: 20px 0 0;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 15px;
+  text-align: center;
+  opacity: 0.75;
+  flex-shrink: 0;
+}
+
+/* "Did you mean" typo hint onder de search bar */
+.search-did-you-mean {
+  margin: 12px 0 0;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 15px;
+  text-align: center;
+  opacity: 0.85;
+  flex-shrink: 0;
+}
+
+/* Clickable suggested title — net als een link, werkt als een knop */
+.search-suggestion {
+  padding: 0;
+  border: none;
+  background: none;
+  color: var(--page-text);
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 600;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  cursor: pointer;
+}
+
+.search-suggestion:hover {
+  opacity: 0.75;
+}
+
+/* resultaten area met een breedte van 5 posters.*/
+.results-area {
+  width: min(100%, 780px);
+  margin-top: 20px;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+  overflow: hidden;
+}
+
+/* Plaatst de "See all" knop aan de rechterrand van de resultaten */
+.see-all-row {
+  width: 100%;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 16px;
+  flex-shrink: 0;
+}
+
+/* Small pill link naar de ResultsPage */
+.see-all {
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--page-text);
+  color: var(--page-bg);
+  font-family: var(--heading);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+}
+
+.see-all:hover {
+  opacity: 0.85;
+}
+
+/* poster grid onder de search-bar; scrollbalk is verborgen */
+.results {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: flex-start;
+  align-content: flex-start;
+  gap: 20px;
+  width: 100%;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding-bottom: 40px;
+  scrollbar-width: none;
+}
+
+/* verberg scrollbalk in Chrome / Safari / Edge */
+.results::-webkit-scrollbar {
+  display: none;
 }

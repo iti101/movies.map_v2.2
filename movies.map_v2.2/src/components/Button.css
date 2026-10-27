@@ -1,0 +1,77 @@
+/* Algemene styling voor elke button */
+.button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: none;
+  background: var(--page-text);
+  color: var(--page-bg);
+  font-family: var(--heading);
+  font-weight: 500;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.2s, box-shadow 0.2s;
+}
+
+/* hover-effect: verlaagt de button een beetje en verzacht de kleur */
+.button:hover:not(:disabled) {
+  background: #555;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+}
+
+/* klik-effect, voor een actieve, niet-gebruikte button: zet de button terug naar de oorspronkelijke positie */
+.button:active:not(:disabled) {
+  transform: translateY(0);
+  box-shadow: none;
+}
+
+/* Styling voor een inactieve button: vervaagt de button en blokkeert klikken */
+.button:disabled {
+  opacity: 0.45;
+  cursor: not-allowed;
+}
+
+/* styling voor een kleine button: kleinere padding en tekst */
+.small {
+  padding: 6px 14px;
+  font-size: 14px;
+}
+
+/* Default button styling voor een medium-grote button: gemiddelde padding en tekst */
+.medium {
+  padding: 10px 20px;
+  font-size: 16px;
+}
+
+/* styling voor een grote button: groter padding en tekst */
+.large {
+  padding: 14px 28px;
+  font-size: 18px;
+}
+
+/* styling voor een lang ovale vorm (de default) */
+.pill {
+  border-radius: 999px;
+}
+
+/* styling voor een perfecte cirkel button; goed voor korte labels als "Ga" */
+.round {
+  border-radius: 50%;
+  padding: 0;
+}
+
+/* styling voor een kleine cirkel button: breedte en hoogte blijven gelijk */
+.round.small {
+  width: 32px;
+  height: 32px;
+}
+/* styling voor een medium-grootte cirkel button */
+.round.medium {
+  width: 44px;
+  height: 44px;
+}
+/* styling voor een grote cirkel button */
+.round.large {
+  width: 56px;
+  height: 56px;
+}

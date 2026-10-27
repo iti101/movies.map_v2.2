@@ -129,9 +129,7 @@ body.dark .icon {
   gap: 28px;
 }
 
-/* Style shared by real links and the dead Watchlist text */
-.menu-links a,
-.dead-link {
+.menu-links a {
   color: var(--page-text);
   font-size: 28px;
   font-weight: 500;
@@ -142,10 +140,4 @@ body.dark .icon {
 /* Slight fade when hovering a real menu link */
 .menu-links a:hover {
   opacity: 0.65;
-}
-
-/* Watchlist is not clickable yet, so use a normal cursor */
-.dead-link {
-  cursor: default;
-  opacity: 0.85;
 }

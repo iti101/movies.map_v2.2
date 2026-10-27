@@ -1,6 +1,5 @@
-/* Centers the intro content inside the hero section */
+/* centreert de intro content*/
 .intro {
-  position: relative;
   display: flex;
   align-items: center;
   justify-content: center;
@@ -10,32 +9,28 @@
   font-size: clamp(1.75rem, 5vw, 3rem);
 }
 
-/* Typed headline shown during the typing phase */
-.typewriter {
-  display: inline;
+/* headline tijdens de typing fase */
+.typing-text {
   margin: 0;
-  font-family: var(--heading);
-  font-weight: 600;
+  color: var(--page-text);
+  font-family: 'Fraunces', Georgia, serif;
+  font-weight: 500;
   font-size: inherit;
   letter-spacing: 0.01em;
   line-height: 1.2;
   white-space: nowrap;
-  color: inherit;
 }
 
-/* Blinking cursor next to the typed text */
-.typewriter__cursor {
+/* cursor tijdens de typing fase */
+.cursor {
   display: inline-block;
   margin-left: 0.02em;
   font-weight: 200;
   font-size: 1.12em;
-  line-height: 1;
-  color: currentColor;
-  animation: tw-blink 0.7s infinite;
+  animation: blink 0.7s infinite;
 }
 
-/* Makes the cursor fade in and out */
-@keyframes tw-blink {
+@keyframes blink {
   0%,
   100% {
     opacity: 1;
@@ -45,8 +40,8 @@
   }
 }
 
-/* Vertical stack for the logo and the Get Started area */
-.intro__lockup {
+/* Verticale indeling v/h logo en Get Started */
+.brand-block {
   position: relative;
   display: flex;
   flex-direction: column;
@@ -54,46 +49,33 @@
   width: 100%;
 }
 
-/* Logo icon and wordmark in a centered row */
-.intro__brand {
-  position: relative;
-  z-index: 1;
+/* Logo icon + wordmark naast elkaar*/
+.brand {
   display: flex;
   align-items: center;
   justify-content: center;
   max-width: 100%;
 }
 
-/* Square logo icon that fades and scales in */
-.intro__icon {
-  position: relative;
-  z-index: 2;
+.logo-icon {
   width: clamp(4.5rem, 14vw, 7.5rem);
   height: auto;
   aspect-ratio: 1;
   object-fit: contain;
   flex-shrink: 0;
-  animation: intro-icon-in 0.5s ease both;
+  animation: icon-in 0.5s ease both;
 }
 
 /* Opens space for the wordmark next to the icon */
-.intro__wordmark-clip {
-  position: relative;
-  z-index: 1;
-  display: grid;
-  grid-template-columns: 1fr;
-  margin-left: clamp(0.35rem, 1.2vw, 0.7rem);
-  animation: intro-wordmark-open 0.95s cubic-bezier(0.22, 1, 0.36, 1) 0.28s both;
-}
-
-/* Hides the overflowing part of the wordmark while the clip opens */
-.intro__wordmark-inner {
-  min-width: 0;
+.logo-clip {
   overflow: hidden;
+  max-width: min(58vw, 24rem);
+  margin-left: clamp(0.35rem, 1.2vw, 0.7rem);
+  animation: logo-open 0.95s cubic-bezier(0.22, 1, 0.36, 1) 0.28s both;
 }
 
 /* Movies.map wordmark image */
-.intro__wordmark {
+.logo-text {
   display: block;
   height: clamp(2.6rem, 8vw, 4.5rem);
   width: auto;
@@ -102,14 +84,13 @@
   object-position: left center;
 }
 
-/* Flip logo images to light colors in dark mode */
-body.dark .intro__icon,
-body.dark .intro__wordmark {
+/* veranderd de kleur v/h logo in light-mode kleuren in dark-mode */
+body.dark .logo-icon,
+body.dark .logo-text {
   filter: invert(1);
 }
 
-/* Icon fades and grows into place */
-@keyframes intro-icon-in {
+@keyframes icon-in {
   from {
     opacity: 0;
     transform: scale(0.88);
@@ -120,20 +101,20 @@ body.dark .intro__wordmark {
   }
 }
 
-/* Wordmark clip grows from closed to full width */
-@keyframes intro-wordmark-open {
+/* verschijning v/h wordmark logo (movies.map + logo*/
+@keyframes logo-open {
   from {
-    grid-template-columns: 0fr;
+    max-width: 0;
     margin-left: 0;
   }
   to {
-    grid-template-columns: 1fr;
+    max-width: min(58vw, 24rem);
     margin-left: clamp(0.35rem, 1.2vw, 0.7rem);
   }
 }
 
 /* Get Started sits below the logo without pushing it up */
-.intro__cta {
+.cta {
   position: absolute;
   top: calc(100% + clamp(2.75rem, 8vw, 4.5rem));
   left: 50%;
@@ -145,42 +126,40 @@ body.dark .intro__wordmark {
   width: max-content;
 }
 
-/* Stack of bars that form a downward arrow */
-.intro__arrow {
+/* De balken die de downward-pijl vormen */
+.arrow {
   display: flex;
   flex-direction: column;
   align-items: center;
   gap: 0.11rem;
-  color: currentColor;
-  animation: intro-fade-down 0.55s ease 0.14s both;
+  animation: fade-down 0.55s ease 0.14s both;
 }
 
-/* One bar of the scroll arrow */
-.intro__arrow-bar {
+/* 1 van de balken van de scroll-pijl */
+.arrow-bar {
   display: block;
   height: 0.36rem;
-  border-radius: 0;
   background: currentColor;
 }
 
-.intro__arrow-bar:nth-child(1) {
+.arrow-bar:nth-child(1) {
   width: 6rem;
 }
 
-.intro__arrow-bar:nth-child(2) {
+.arrow-bar:nth-child(2) {
   width: 4.35rem;
 }
 
-.intro__arrow-bar:nth-child(3) {
+.arrow-bar:nth-child(3) {
   width: 2.7rem;
 }
 
-.intro__arrow-bar:nth-child(4) {
+.arrow-bar:nth-child(4) {
   width: 1.15rem;
 }
 
-/* Plain text-style Get Started button */
-.intro__start {
+/* Get Started knop */
+.get-started {
   padding: 0;
   border: none;
   background: transparent;
@@ -190,16 +169,15 @@ body.dark .intro__wordmark {
   font-weight: 500;
   letter-spacing: 0.04em;
   cursor: pointer;
-  animation: intro-fade-down 0.55s ease both;
+  animation: fade-down 0.55s ease both;
 }
 
-/* Soft hover so the button feels clickable */
-.intro__start:hover {
+.get-started:hover {
   opacity: 0.65;
 }
 
-/* Fades the CTA and arrow in from slightly above */
-@keyframes intro-fade-down {
+/* de Get Started knop en arrow verschijnt vanaf boven naar beneden */
+@keyframes fade-down {
   from {
     opacity: 0;
     transform: translateY(-0.95rem);
@@ -210,28 +188,27 @@ body.dark .intro__wordmark {
   }
 }
 
-/* Turn off motion when the user prefers reduced motion */
+/* stopt de animatie */
 @media (prefers-reduced-motion: reduce) {
-  .typewriter__cursor {
+  .cursor {
     display: none;
-    animation: none;
   }
 
-  .intro__icon,
-  .intro__wordmark-clip,
-  .intro__arrow,
-  .intro__start {
+  .logo-icon,
+  .logo-clip,
+  .arrow,
+  .get-started {
     animation: none;
   }
 }
 
-/* Allow the typed line to wrap on very small screens */
+/* laat de tekst op kleinere schermen ook op de volgende regel beginnen */
 @media (max-width: 480px) {
-  .typewriter {
+  .typing-text {
     white-space: normal;
   }
 
-  .intro__wordmark {
+  .logo-text {
     max-width: min(52vw, 14rem);
   }
 }
