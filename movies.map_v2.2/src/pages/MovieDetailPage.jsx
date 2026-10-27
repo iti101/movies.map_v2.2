@@ -2,6 +2,8 @@ import { useEffect, useState } from 'react'
 import { useNavigate, useParams } from 'react-router-dom'
 import Button from '../components/Button'
 import DetailPage from '../components/DetailPage'
+import ReviewSection from '../components/ReviewSection'
+import WhereToWatch from '../components/WhereToWatch'
 import { useAuth } from '../AuthContext.jsx'
 import {
   getMovie,
@@ -238,6 +240,12 @@ function MovieDetailPage() {
             }
             textTitle="Storyline"
             text={movie.overview}
+            afterStory={
+              <>
+                <ReviewSection mediaType="movie" mediaId={movie.id} />
+                <WhereToWatch mediaType="movie" mediaId={movie.id} />
+              </>
+            }
             relatedTitle="Cast"
             related={cast}
             onRelatedClick={openPerson}

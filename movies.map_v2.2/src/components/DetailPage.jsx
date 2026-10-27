@@ -43,6 +43,7 @@ function DetailPage({
   actions,
   textTitle,
   text,
+  afterStory,
   relatedTitle,
   related,
   onRelatedClick,
@@ -101,6 +102,9 @@ function DetailPage({
           {text && <p className="detail-text">{text}</p>}
         </section>
       )}
+
+      {/* Optional slot between storyline and cast (e.g. movie reviews) */}
+      {afterStory}
 
       <section className="detail-related">
         {relatedTitle && (

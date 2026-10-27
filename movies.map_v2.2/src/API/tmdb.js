@@ -226,15 +226,14 @@ export async function discoverMoviesByGenre(genreId) {
 }
 
 /**
- * Discover movies or TV with Randomizer filters.
- * @param {{ mediaType: 'movie'|'tv', withGenreId?: number|string, withoutGenreId?: number|string, personId?: number|string, page?: number }} params
+ * Discover movies or TV with Randomizer filters (genres only — no person).
+ * @param {{ mediaType: 'movie'|'tv', withGenreId?: number|string, withoutGenreId?: number|string, page?: number }} params
  * @returns {Promise<{ results: object[], totalPages: number, page: number }>}
  */
 export async function discoverRandom({
   mediaType,
   withGenreId,
   withoutGenreId,
-  personId,
   page = 1,
 }) {
   const path = mediaType === 'tv' ? '/discover/tv' : '/discover/movie'
@@ -251,9 +250,6 @@ export async function discoverRandom({
   if (withoutGenreId) {
     query += '&without_genres=' + encodeURIComponent(String(withoutGenreId))
   }
-  if (personId) {
-    query += '&with_people=' + encodeURIComponent(String(personId))
-  }
 
   const data = await tmdbGet(query, 'Could not find a suggestion. Please try again.')
 
@@ -261,6 +257,55 @@ export async function discoverRandom({
     results: (data.results || []).map((item) => ({ ...item, media_type: type })),
     totalPages: data.total_pages || 1,
     page: data.page || page,
+  }
+}
+
+// filtert de film-/tv-credits van één persoon (TMDB discover/tv negeert with_people)
+export async function discoverByPerson({
+  mediaType,
+  personId,
+  withGenreId,
+  withoutGenreId,
+}) {
+  const type = mediaType === 'tv' ? 'tv' : 'movie'
+  const credits = await getPersonCombinedCredits(personId)
+  const rows = [...(credits.cast || []), ...(credits.crew || [])]
+
+  const seen = new Set()
+  let items = []
+
+  for (const item of rows) {
+    if (!item?.id || seen.has(item.id)) continue
+    if (item.adult === true) continue
+    // combined_credits zet media_type; movie_credits/tv_credits niet altijd
+    const itemType = item.media_type || type
+    if (itemType !== type) continue
+    seen.add(item.id)
+    items.push({ ...item, media_type: type })
+  }
+
+  const liked = withGenreId != null ? Number(withGenreId) : null
+  const excluded = withoutGenreId != null ? Number(withoutGenreId) : null
+
+  if (Number.isFinite(liked)) {
+    items = items.filter(
+      (item) =>
+        Array.isArray(item.genre_ids) && item.genre_ids.includes(liked),
+    )
+  }
+  if (Number.isFinite(excluded)) {
+    items = items.filter(
+      (item) =>
+        !Array.isArray(item.genre_ids) || !item.genre_ids.includes(excluded),
+    )
+  }
+
+  items.sort((a, b) => (b.popularity || 0) - (a.popularity || 0))
+
+  return {
+    results: items,
+    totalPages: 1,
+    page: 1,
   }
 }
 
@@ -606,4 +651,168 @@ export async function getPersonCombinedCredits(personId) {
   }
 
   return await response.json()
+}
+
+// --- Where to watch (JustWatch via TMDB) ---
+
+const WATCH_REGION_KEY = 'watchRegion'
+const PROVIDER_LOGO_BASE = 'https://image.tmdb.org/t/p/w92'
+
+const OFFER_LABELS = {
+  flatrate: 'Stream',
+  free: 'Free',
+  ads: 'Free with ads',
+  rent: 'Rent',
+  buy: 'Buy',
+}
+
+const FALLBACK_REGIONS = [
+  'US',
+  'GB',
+  'NL',
+  'DE',
+  'FR',
+  'CA',
+  'AU',
+  'BE',
+  'ES',
+  'IT',
+  'SE',
+  'BR',
+  'MX',
+  'JP',
+  'IN',
+]
+
+const regionNames =
+  typeof Intl !== 'undefined' && Intl.DisplayNames
+    ? new Intl.DisplayNames(['en'], { type: 'region' })
+    : null
+
+let watchRegionsRequest = null
+
+export function watchRegionName(code) {
+  if (!code) return ''
+  try {
+    return regionNames?.of(code) || code
+  } catch {
+    return code
+  }
+}
+
+function toRegionOptions(codes) {
+  return [...new Set(codes.filter(Boolean))]
+    .map((code) => ({
+      code: String(code).toUpperCase(),
+      name: watchRegionName(String(code).toUpperCase()),
+    }))
+    .sort((a, b) => a.name.localeCompare(b.name, 'en'))
+}
+
+export function getFallbackWatchRegions() {
+  return toRegionOptions(FALLBACK_REGIONS)
+}
+
+// laatst gekozen land, of browser-regio, of US
+export function getSavedWatchRegion() {
+  try {
+    const saved = localStorage.getItem(WATCH_REGION_KEY)
+    if (saved && /^[A-Z]{2}$/.test(saved)) return saved
+  } catch {
+    // private browsing kan storage blokkeren
+  }
+  const region = navigator.language?.split('-')[1]
+  return region && /^[A-Za-z]{2}$/.test(region) ? region.toUpperCase() : 'US'
+}
+
+export function saveWatchRegion(region) {
+  try {
+    localStorage.setItem(WATCH_REGION_KEY, region)
+  } catch {
+    // negeer storage-fouten
+  }
+}
+
+export function providerLogoUrl(logoPath) {
+  if (!logoPath) return null
+  return PROVIDER_LOGO_BASE + logoPath
+}
+
+// zet TMDB watch/providers om naar { US: { link, providers }, ... }
+function normalizeWatchProviders(watchProviders) {
+  const regions = {}
+
+  for (const [code, offers] of Object.entries(watchProviders?.results ?? {})) {
+    const providers = new Map()
+
+    for (const [offerType, label] of Object.entries(OFFER_LABELS)) {
+      for (const provider of offers?.[offerType] ?? []) {
+        if (!provider?.provider_id) continue
+        const known = providers.get(provider.provider_id)
+        if (known) {
+          if (!known.offers.includes(label)) known.offers.push(label)
+          continue
+        }
+        providers.set(provider.provider_id, {
+          id: provider.provider_id,
+          name: provider.provider_name,
+          logoPath: provider.logo_path,
+          offers: [label],
+        })
+      }
+    }
+
+    const list = [...providers.values()]
+    // Stream/Free eerst, daarna Rent/Buy
+    list.sort((a, b) => {
+      const rank = (offers) => {
+        if (offers.includes('Stream') || offers.includes('Free') || offers.includes('Free with ads')) {
+          return 0
+        }
+        if (offers.includes('Rent')) return 1
+        return 2
+      }
+      const diff = rank(a.offers) - rank(b.offers)
+      if (diff !== 0) return diff
+      return a.name.localeCompare(b.name, 'en')
+    })
+
+    regions[code.toUpperCase()] = {
+      link: offers?.link || null,
+      providers: list,
+    }
+  }
+
+  return regions
+}
+
+// landlijst voor de dropdown (één keer per sessie cachen)
+export function getWatchRegions() {
+  if (!watchRegionsRequest) {
+    watchRegionsRequest = tmdbGet(
+      '/watch/providers/regions?language=en-US',
+      'Could not load watch regions.',
+    )
+      .then((data) => {
+        const codes = (data.results ?? []).map((region) =>
+          region.iso_3166_1?.toUpperCase(),
+        )
+        return toRegionOptions(codes.length ? codes : FALLBACK_REGIONS)
+      })
+      .catch(() => {
+        watchRegionsRequest = null
+        return getFallbackWatchRegions()
+      })
+  }
+  return watchRegionsRequest
+}
+
+// haalt aanbieders per land op voor een film of serie
+export async function getWatchProviders(mediaType, mediaId) {
+  const type = mediaType === 'tv' ? 'tv' : 'movie'
+  const data = await tmdbGet(
+    `/${type}/${mediaId}/watch/providers`,
+    'Could not load watch options.',
+  )
+  return normalizeWatchProviders(data)
 }

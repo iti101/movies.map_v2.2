@@ -1,0 +1,141 @@
+.review-section {
+  margin-top: 40px;
+}
+
+.review-form {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  max-width: 70ch;
+}
+
+.review-label {
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 14px;
+  font-weight: 500;
+  opacity: 0.7;
+}
+
+.review-rating-field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.review-meta .star-rating {
+  font-size: 0;
+}
+
+.review-meta .star-rating__star {
+  font-size: 16px;
+  padding: 0;
+}
+
+.review-textarea {
+  box-sizing: border-box;
+  width: 100%;
+  min-height: 110px;
+  padding: 12px 14px;
+  border: 1px solid color-mix(in srgb, var(--page-text) 35%, transparent);
+  border-radius: 12px;
+  background: color-mix(in srgb, var(--page-text) 6%, transparent);
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 16px;
+  line-height: 1.5;
+  resize: vertical;
+  outline: none;
+}
+
+.review-textarea::placeholder {
+  color: var(--page-text);
+  opacity: 0.5;
+}
+
+.review-textarea:focus {
+  border-color: var(--page-text);
+  box-shadow: 0 0 0 1px var(--page-text);
+}
+
+.review-textarea:disabled {
+  opacity: 0.6;
+}
+
+.review-form-actions {
+  display: flex;
+  justify-content: flex-start;
+}
+
+.review-status {
+  margin: 0;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 15px;
+  opacity: 0.75;
+}
+
+.review-status-error {
+  opacity: 1;
+  color: #c0392b;
+}
+
+body.dark .review-status-error {
+  color: #ff8a80;
+}
+
+.review-list-wrap {
+  margin-top: 24px;
+}
+
+.review-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  max-width: 70ch;
+}
+
+.review-item {
+  padding-bottom: 16px;
+  border-bottom: 1px solid color-mix(in srgb, var(--page-text) 18%, transparent);
+}
+
+.review-item:last-child {
+  padding-bottom: 0;
+  border-bottom: none;
+}
+
+.review-meta {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 10px;
+  margin-bottom: 6px;
+}
+
+.review-author {
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+.review-date {
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 13px;
+  opacity: 0.55;
+}
+
+.review-text {
+  margin: 0;
+  color: var(--page-text);
+  font-family: var(--heading);
+  font-size: 16px;
+  line-height: 1.65;
+  opacity: 0.9;
+  white-space: pre-wrap;
+}

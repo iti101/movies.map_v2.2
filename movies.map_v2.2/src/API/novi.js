@@ -143,6 +143,8 @@ function asList(data) {
   if (Array.isArray(data)) return data
   if (Array.isArray(data?.data)) return data.data
   if (Array.isArray(data?.items)) return data.items
+  if (Array.isArray(data?.content)) return data.content
+  if (Array.isArray(data?.reviews)) return data.reviews
   return []
 }
 
@@ -334,6 +336,81 @@ export async function addWatchlistItem({
     throw new Error(
       apiErrorMessage(data, 'Could not add title to watchlist.'),
     )
+  }
+
+  return data
+}
+
+// haalt reviews op en filtert client-side op mediaType + mediaId
+export async function getReviewsForMedia(mediaType, mediaId, token) {
+  requireProjectId()
+
+  if (!token) {
+    return []
+  }
+
+  const response = await fetch(`${API_BASE}/api/reviews`, {
+    method: 'GET',
+    headers: noviHeaders(token),
+  })
+
+  const data = await parseJson(response)
+
+  if (!response.ok) {
+    if (response.status === 401 || response.status === 403) {
+      throw new Error('Your session expired. Please sign in again.')
+    }
+    throw new Error(apiErrorMessage(data, 'Could not load reviews.'))
+  }
+
+  return asList(data)
+    .filter(
+      (review) =>
+        review.mediaType === mediaType &&
+        Number(review.mediaId) === Number(mediaId),
+    )
+    .sort(
+      (a, b) => new Date(b.createdAt || 0) - new Date(a.createdAt || 0),
+    )
+}
+
+// publiceert een review voor een film/serie (rating 1–5 is optioneel)
+export async function createReview({
+  userId,
+  mediaType,
+  mediaId,
+  text,
+  rating,
+  token,
+}) {
+  requireProjectId()
+
+  const trimmed = text?.trim()
+  if (!trimmed) {
+    throw new Error('Write a short review before submitting.')
+  }
+
+  const score = Number(rating)
+
+  const response = await fetch(`${API_BASE}/api/reviews`, {
+    method: 'POST',
+    headers: noviHeaders(token),
+    body: JSON.stringify({
+      userId,
+      mediaType,
+      mediaId: Number(mediaId),
+      text: trimmed,
+      ...(score >= 1 && score <= 5 ? { rating: score } : {}),
+    }),
+  })
+
+  const data = await parseJson(response)
+
+  if (!response.ok) {
+    if (response.status === 401 || response.status === 403) {
+      throw new Error('Your session expired. Please sign in again.')
+    }
+    throw new Error(apiErrorMessage(data, 'Could not publish your review.'))
   }
 
   return data
