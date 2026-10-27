@@ -7,6 +7,7 @@ import TvShowDetailPage from './pages/TvShowDetailPage.jsx'
 import PersonDetailPage from './pages/PersonDetailPage.jsx'
 import ResultsPage from './pages/ResultsPage.jsx'
 import WatchlistPage from './pages/WatchlistPage.jsx'
+import PrivateRoute from './components/PrivateRoute.jsx'
 
 function App() {
   return (
@@ -16,7 +17,14 @@ function App() {
         <Routes>
           <Route path="/" element={<Landing />} />
           <Route path="/results" element={<ResultsPage />} />
-          <Route path="/watchlist" element={<WatchlistPage />} /> {/* eigen watchlists bekijken en aanmaken */}
+          <Route
+            path="/watchlist"
+            element={
+              <PrivateRoute>
+                <WatchlistPage />
+              </PrivateRoute>
+            }
+          />
           <Route path="/movie/:movieId" element={<MovieDetailPage />} />
           <Route path="/tv/:tvId" element={<TvShowDetailPage />} />
           <Route path="/person/:personId" element={<PersonDetailPage />} />
