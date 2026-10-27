@@ -20,14 +20,6 @@
   text-align: center;
 }
 
-/* midden-uitlijning van de 'log in'-prompt */
-.watchlist-page-signed-out {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 16px;
-}
-
 .watchlist-page-message {
   margin: 0 0 20px;
   color: var(--page-text);

@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import LoginModal from './components/LoginModal.jsx'
 import SignupModal from './components/SignupModal.jsx'
 import {
@@ -14,6 +14,7 @@ const AuthContext = createContext(null)
 
 export function AuthProvider({ children }) {
   const navigate = useNavigate()
+  const location = useLocation()
   const [isLoggedIn, setIsLoggedIn] = useState(() => hasSession())
   const [user, setUser] = useState(() => getUser())
   const [isLoginOpen, setIsLoginOpen] = useState(false)
@@ -38,13 +39,30 @@ export function AuthProvider({ children }) {
     saveSession({ token: session.token, user: session.user })
     setUser(getUser())
     setIsLoggedIn(true)
-  }, [])
+
+    // terug naar de afgeschermde pagina die de bezoeker wilde openen
+    const from = location.state?.from
+    if (from?.pathname === '/watchlist') {
+      navigate(
+        {
+          pathname: from.pathname,
+          search: from.search || '',
+          hash: from.hash || '',
+        },
+        { replace: true, state: from.state },
+      )
+    }
+  }, [location.state, navigate])
 
   const logout = useCallback(() => {
+    // eerst weg van de afgeschermde pagina, zodat uitloggen geen login-modal opent
+    if (location.pathname === '/watchlist') {
+      navigate('/', { replace: true })
+    }
     clearSession()
     setUser(null)
     setIsLoggedIn(false)
-  }, [])
+  }, [location.pathname, navigate])
 
   // verlopen sessie als uitgelogd behandelen
   useEffect(() => {

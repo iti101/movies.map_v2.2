@@ -183,92 +183,77 @@ function WatchlistPage() {
     <main className="watchlist-page">
       <h1 className="watchlist-page-title">My Watchlists</h1>
 
-      {!isLoggedIn && (
-        <div className="watchlist-page-signed-out">
-          <p className="watchlist-page-message">
-            Sign in to view and create your watchlists.
+      {pendingItem && (
+        <div className="watchlist-pending">
+          <p className="watchlist-pending-text">
+            Add <strong>{pendingItem.title}</strong> to a watchlist
           </p>
-          <Button onClick={openLogin}>Sign in</Button>
+          <Button size="small" onClick={clearPending}>
+            Cancel
+          </Button>
         </div>
       )}
 
-      {isLoggedIn && (
-        <>
-          {pendingItem && (
-            <div className="watchlist-pending">
-              <p className="watchlist-pending-text">
-                Add <strong>{pendingItem.title}</strong> to a watchlist
-              </p>
-              <Button size="small" onClick={clearPending}>
-                Cancel
-              </Button>
-            </div>
-          )}
+      <form className="watchlist-create" onSubmit={handleCreate}>
+        <input
+          type="text"
+          className="watchlist-create-input"
+          placeholder="New watchlist name"
+          value={newListName}
+          onChange={(event) => setNewListName(event.target.value)}
+          disabled={creating || loading}
+        />
+        <Button type="submit" disabled={creating || loading}>
+          {creating ? 'Creating…' : 'Create list'}
+        </Button>
+      </form>
 
-          <form className="watchlist-create" onSubmit={handleCreate}>
-            <input
-              type="text"
-              className="watchlist-create-input"
-              placeholder="New watchlist name"
-              value={newListName}
-              onChange={(event) => setNewListName(event.target.value)}
-              disabled={creating || loading}
-            />
-            <Button type="submit" disabled={creating || loading}>
-              {creating ? 'Creating…' : 'Create list'}
-            </Button>
-          </form>
-
-          {error && <p className="watchlist-page-message">{error}</p>}
-          {!error && loading && (
-            <p className="watchlist-page-message">Loading…</p>
-          )}
-          {!error && !loading && lists.length === 0 && (
-            <p className="watchlist-page-message">
-              You have no watchlists yet. Create one above.
-            </p>
-          )}
-
-          {!loading &&
-            lists.map((list) => {
-              const items = itemsByList[list.id] || []
-              return (
-                <section key={list.id} className="watchlist-section">
-                  <div className="watchlist-section-header">
-                    <h2 className="watchlist-section-title">{list.name}</h2>
-                    {pendingItem && (
-                      <Button
-                        size="small"
-                        disabled={addingToId === list.id}
-                        onClick={() => handleAddToList(list.id)}
-                      >
-                        {addingToId === list.id
-                          ? 'Adding…'
-                          : 'Add to this list'}
-                      </Button>
-                    )}
-                  </div>
-
-                  {items.length === 0 ? (
-                    <p className="watchlist-empty">No titles yet.</p>
-                  ) : (
-                    <div className="watchlist-grid">
-                      {items.map((item) => {
-                        const key =
-                          (item.media_type || 'movie') +
-                          '-' +
-                          item.id +
-                          '-' +
-                          (item.itemId ?? '')
-                        return <ResultCard key={key} item={item} />
-                      })}
-                    </div>
-                  )}
-                </section>
-              )
-            })}
-        </>
+      {error && <p className="watchlist-page-message">{error}</p>}
+      {!error && loading && (
+        <p className="watchlist-page-message">Loading…</p>
       )}
+      {!error && !loading && lists.length === 0 && (
+        <p className="watchlist-page-message">
+          You have no watchlists yet. Create one above.
+        </p>
+      )}
+
+      {!loading &&
+        lists.map((list) => {
+          const items = itemsByList[list.id] || []
+          return (
+            <section key={list.id} className="watchlist-section">
+              <div className="watchlist-section-header">
+                <h2 className="watchlist-section-title">{list.name}</h2>
+                {pendingItem && (
+                  <Button
+                    size="small"
+                    disabled={addingToId === list.id}
+                    onClick={() => handleAddToList(list.id)}
+                  >
+                    {addingToId === list.id ? 'Adding…' : 'Add to this list'}
+                  </Button>
+                )}
+              </div>
+
+              {items.length === 0 ? (
+                <p className="watchlist-empty">No titles yet.</p>
+              ) : (
+                <div className="watchlist-grid">
+                  {items.map((item) => {
+                    const key =
+                      (item.media_type || 'movie') +
+                      '-' +
+                      item.id +
+                      '-' +
+                      (item.itemId ?? '')
+                    return <ResultCard key={key} item={item} />
+                  })}
+                </div>
+              )}
+            </section>
+          )
+        })}
     </main>
   )
 }
